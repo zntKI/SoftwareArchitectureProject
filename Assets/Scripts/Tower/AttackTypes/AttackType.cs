@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class AttackType : MonoBehaviour
 {
-    public abstract void Perform(List<ITarget> targets);
+    public abstract void Perform(List<GameObject> targets);
 }

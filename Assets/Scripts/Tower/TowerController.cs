@@ -17,7 +17,7 @@ public class TowerController : MonoBehaviour
 
     private void Update()
     {
-        List<ITarget> targets = towerSelector.SelectTarget();
+        List<GameObject> targets = towerSelector.SelectTarget();
 
         if (targets.Count != 0)
         {

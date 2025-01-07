@@ -4,5 +4,7 @@ using UnityEngine;
 
 public abstract class TargetSelector : MonoBehaviour
 {
-    public abstract List<ITarget> SelectTarget();
+    protected List<GameObject> selectedTargets;
+
+    public abstract List<GameObject> SelectTarget();
 }

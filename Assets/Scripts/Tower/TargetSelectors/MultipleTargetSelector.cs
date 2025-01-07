@@ -10,6 +10,8 @@ public class MultipleTargetSelector : TargetSelector
     private void Start()
     {
         selectionRange = GetComponent<SelectionRange>();
+
+        selectedTargets = new List<GameObject>();
     }
 
     private void Update()
@@ -17,9 +19,24 @@ public class MultipleTargetSelector : TargetSelector
         SelectTarget();
     }
 
-    public override List<ITarget> SelectTarget()
+    public override List<GameObject> SelectTarget()
     {
-        // TODO: Do the selection
-        return new List<ITarget>();
+        // Selection
+        var enemies = GameObject.FindGameObjectsWithTag("Target");
+        foreach (var enemy in enemies)
+        {
+            float distance = (enemy.transform.position - this.transform.position).magnitude;
+            if (distance <= selectionRange.Range && !selectedTargets.Contains(enemy))
+            {
+                selectedTargets.Add(enemy);
+                Debug.Log("Target in range!" + selectedTargets.Count);
+            }
+            else if (selectedTargets.Contains(enemy) && distance > selectionRange.Range)
+            {
+                selectedTargets.Remove(enemy);
+            }
+        }
+
+        return selectedTargets;
     }
 }

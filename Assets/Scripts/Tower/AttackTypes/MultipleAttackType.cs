@@ -15,7 +15,7 @@ public class MultipleAttackType : AttackType
         attackInterval = GetComponent<AttackInterval>();
     }
 
-    public override void Perform(List<ITarget> targets)
+    public override void Perform(List<GameObject> targets)
     {
         // TODO: Perform attack on multiple targets
     }

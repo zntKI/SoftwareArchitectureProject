@@ -15,7 +15,7 @@ public class SingleAttackType : AttackType
         attackInterval = GetComponent<AttackInterval>();
     }
 
-    public override void Perform(List<ITarget> targets)
+    public override void Perform(List<GameObject> targets)
     {
         // TODO: Perform attack on single target
     }

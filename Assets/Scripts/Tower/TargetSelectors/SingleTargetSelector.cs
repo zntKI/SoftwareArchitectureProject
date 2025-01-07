@@ -10,6 +10,8 @@ public class SingleTargetSelector : TargetSelector
     private void Start()
     {
         selectionRange = GetComponent<SelectionRange>();
+
+        selectedTargets = new List<GameObject>();
     }
 
     private void Update()
@@ -17,9 +19,25 @@ public class SingleTargetSelector : TargetSelector
         SelectTarget();
     }
 
-    public override List<ITarget> SelectTarget()
+    public override List<GameObject> SelectTarget()
     {
-        // TODO: Do the selection
-        return new List<ITarget>();
+        // Selection
+        var enemies = GameObject.FindGameObjectsWithTag("Target");
+        foreach (var enemy in enemies)
+        {
+            float distance = (enemy.transform.position - this.transform.position).magnitude;
+            if (distance <= selectionRange.Range && selectedTargets.Count == 0)
+            {
+                selectedTargets.Insert(0, enemy);
+                Debug.Log("Target in range!");
+            }
+            else if (selectedTargets.Count != 0 &&
+                selectedTargets[0] == enemy && distance > selectionRange.Range)
+            {
+                selectedTargets.Clear();
+            }
+        }
+
+        return selectedTargets;
     }
 }
