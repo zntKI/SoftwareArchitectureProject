@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6084020854924815322
+--- !u!1 &8554847275604641160
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7700174426587591481}
-  - component: {fileID: 2623426729263557904}
+  - component: {fileID: 3134324946220243771}
+  - component: {fileID: 3122035485378366919}
+  - component: {fileID: -9138882430862894352}
   m_Layer: 0
-  m_Name: SpawnPoint
-  m_TagString: Untagged
+  m_Name: Waypoint
+  m_TagString: Waypoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7700174426587591481
+--- !u!4 &3134324946220243771
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6084020854924815322}
+  m_GameObject: {fileID: 8554847275604641160}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,17 +33,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2623426729263557904
+--- !u!114 &3122035485378366919
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6084020854924815322}
+  m_GameObject: {fileID: 8554847275604641160}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d2cc6e883b5f674c9f8ef047e52b3a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 4055a07423972074d90c7407fd119ad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 1069809188755822784, guid: 6a7250e7f1d16194bb34f641429a86eb, type: 3}
-  spawnIntervalSec: 2
+  id: 0
+--- !u!114 &-9138882430862894352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554847275604641160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6fbabb5704275438176617c74af7b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 0
+  shouldDraw: 1
+  radius: 0.1
+  color: {r: 1, g: 0.8375957, b: 0, a: 1}
+  segments: 50

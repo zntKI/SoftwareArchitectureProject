@@ -11,6 +11,11 @@ public class EnemiesSpawner : MonoBehaviour
     private float spawnIntervalSec;
     private float spawnIntervalCounter = 0f;
 
+    void Start()
+    {
+        Instantiate(enemyPrefab, this.transform.position, Quaternion.identity);
+    }
+
     void Update()
     {
         spawnIntervalCounter += Time.deltaTime;

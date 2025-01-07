@@ -29,11 +29,12 @@ public class MultipleTargetSelector : TargetSelector
             if (distance <= selectionRange.Range && !selectedTargets.Contains(enemy))
             {
                 selectedTargets.Add(enemy);
-                Debug.Log("Target in range!" + selectedTargets.Count);
+                //Debug.Log("Target in range!" + selectedTargets.Count);
             }
             else if (selectedTargets.Contains(enemy) && distance > selectionRange.Range)
             {
                 selectedTargets.Remove(enemy);
+                //Debug.Log("Target out of range!" + selectedTargets.Count);
             }
         }
 

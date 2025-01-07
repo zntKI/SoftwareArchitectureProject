@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 3531525654092702943}
   - component: {fileID: -5848249220410017469}
   - component: {fileID: 3214371462294742295}
+  - component: {fileID: 8345870532300316425}
+  - component: {fileID: 5297577851168269537}
   m_Layer: 0
   m_Name: Enemy_Weak
   m_TagString: Target
@@ -97,4 +99,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 559c267d1c434fa48a2d422ad49ac942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
+--- !u!114 &8345870532300316425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069809188755822784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acf8381420458e042ac69ffea10f2573, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0.7
+--- !u!114 &5297577851168269537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069809188755822784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f755243fd80eb7642bd3fba3b7a33031, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
