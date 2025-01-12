@@ -9,7 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7700174426587591481}
-  - component: {fileID: 2623426729263557904}
+  - component: {fileID: 7203059007290347455}
+  - component: {fileID: 1981827268384187302}
+  - component: {fileID: -4446531116142940576}
+  - component: {fileID: 649418377644345963}
+  - component: {fileID: -5234993801935463337}
+  - component: {fileID: 4536527807639296786}
+  - component: {fileID: 826060219760575958}
   m_Layer: 0
   m_Name: SpawnPoint
   m_TagString: Untagged
@@ -32,7 +38,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2623426729263557904
+--- !u!114 &7203059007290347455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,5 +50,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d2cc6e883b5f674c9f8ef047e52b3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 1069809188755822784, guid: 6a7250e7f1d16194bb34f641429a86eb, type: 3}
-  spawnIntervalSec: 2
+  currentWave: 0
+--- !u!114 &1981827268384187302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e9f6819ad95874c9ba072db6a4c967, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allWavesProperties:
+  - weakEnemies: 5
+    strongEnemies: 0
+  - weakEnemies: 8
+    strongEnemies: 1
+  - weakEnemies: 12
+    strongEnemies: 3
+  - weakEnemies: 16
+    strongEnemies: 5
+  - weakEnemies: 20
+    strongEnemies: 8
+--- !u!114 &-4446531116142940576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0adab945ace116b4b9f6e7e095905189, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeBetweenEnemiesSec: 2
+--- !u!114 &649418377644345963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1881c97dc40aebe439934f10c680baf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSpawnSpeedStrategy: {fileID: -4446531116142940576}
+--- !u!114 &-5234993801935463337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d5e3d0cc1b3254db5ca38c9534a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyWeakPrefab: {fileID: 1069809188755822784, guid: 6a7250e7f1d16194bb34f641429a86eb, type: 3}
+  enemyStrongPrefab: {fileID: 1069809188755822784, guid: 6a70eee6e2ce3554cbc0fc913014f98c, type: 3}
+--- !u!114 &4536527807639296786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69669aaf01d56b946b25a00a0278e638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyWeakPrefab: {fileID: 1069809188755822784, guid: 6a7250e7f1d16194bb34f641429a86eb, type: 3}
+  enemyStrongPrefab: {fileID: 1069809188755822784, guid: 6a70eee6e2ce3554cbc0fc913014f98c, type: 3}
+--- !u!114 &826060219760575958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6084020854924815322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a1806861848a747b10dec17b98c58d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentSpawnOrderStrategy: {fileID: -5234993801935463337}
