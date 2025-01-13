@@ -12,15 +12,14 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     private Queue<GameObject> waypoints;
 
-    private GameObject currentTargetWaypoint;
-    private DebugCircle currentTargetWaypointCircle;
+    private Tuple<GameObject, DebugCircle> currentTargetWaypoint;
 
-    // Start is called before the first frame update
     void Start()
     {
         moveSpeed = GetComponent<MoveSpeed>();
 
         SetupCollections();
+        currentTargetWaypoint = new Tuple<GameObject, DebugCircle>(null, null);
     }
 
     void SetupCollections()
@@ -50,17 +49,13 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     bool PickWaypoint()
     {
-        if (currentTargetWaypoint == null)
+        if (currentTargetWaypoint.Item1 == null)
         {
-            if (!HasReachedEnd())
-            {
-                currentTargetWaypoint = waypoints.Dequeue();
-                currentTargetWaypointCircle = currentTargetWaypoint.GetComponent<DebugCircle>();
-
-                //Debug.Log("Waypoint picked!");
-            }
-            else
+            if (HasReachedEnd())
                 return false;
+
+            var newWaypoint = waypoints.Peek();
+            currentTargetWaypoint = new Tuple<GameObject, DebugCircle>(waypoints.Dequeue(), newWaypoint.GetComponent<DebugCircle>());
         }
         return true;
     }
@@ -69,11 +64,7 @@ public class WaypointMovementBehaviour : MovementBehaviour
     {
         if (waypoints.Count == 0) // There is no more waypoints to visit
         {
-            // TODO: move it elsewhere - single responsibility
-            // Remove enemy
-            Destroy(gameObject);
-            //Debug.Log("Reached end - Enemy destroyed!");
-
+            ReachedEnd();
             return true;
         }
         return false;
@@ -81,18 +72,16 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     void Move()
     {
-        var amountToMove = (currentTargetWaypoint.transform.position - this.transform.position).normalized * moveSpeed.MoveSpeeD * Time.deltaTime;
+        var amountToMove = (currentTargetWaypoint.Item1.transform.position - this.transform.position).normalized * moveSpeed.MoveSpeeD * Time.deltaTime;
         transform.Translate(amountToMove);
     }
 
     void CheckIfWaypointReached()
     {
-        float distance = (currentTargetWaypoint.transform.position - this.transform.position).magnitude;
-        if (distance < currentTargetWaypointCircle.Radius)
+        float distance = (currentTargetWaypoint.Item1.transform.position - this.transform.position).magnitude;
+        if (distance < currentTargetWaypoint.Item2.Radius)
         {
-            currentTargetWaypoint = null;
-            currentTargetWaypointCircle = null;
-            //Debug.Log("Waypoint reached!");
+            currentTargetWaypoint = new Tuple<GameObject, DebugCircle>(null, null);
         }
     }
 }
