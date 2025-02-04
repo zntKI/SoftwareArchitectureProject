@@ -37,7 +37,7 @@ public class TargetFollowController : MonoBehaviour
     {
         if (collision.TryGetComponent<EnemyController>(out EnemyController enemy))
         {
-            Debug.Log("TakeDamage");
+            //Debug.Log("TakeDamage");
             enemy.TakeDamage(targetDamageAmount);
             Destroy(gameObject);
         }

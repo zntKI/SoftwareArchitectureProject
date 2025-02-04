@@ -9,6 +9,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public static event Action<EnemyController> OnDied;
+    public static event Action<int> OnMoneyDropped;
 
     private EnemyModel model;
     private EnemyView view;
@@ -67,9 +68,12 @@ public class EnemyController : MonoBehaviour
 
     void Died()
     {
+        view.SpawnMoneyParticle(model.Money);
+
         Destroy(gameObject);
 
         OnDied?.Invoke(this);
+        OnMoneyDropped?.Invoke(model.Money);
         // Also fire an event to increase money?
     }
 

@@ -191,6 +191,8 @@ MonoBehaviour:
   fullHealthSprite: {fileID: 21300000, guid: 59b7bd07573512e42a6820bce6f9d2ff, type: 3}
   midHealthSprite: {fileID: 21300000, guid: 7990003ecdd5f5a43bde8b0526ca7b78, type: 3}
   lowHealthSprite: {fileID: 21300000, guid: 1ab99f8c7ab087c45a9cefdfd96ce42e, type: 3}
+  moneyParticlePrefab: {fileID: 6400700492368468933, guid: 89513a4c0f3cb6d4e883dfb814e09759, type: 3}
+  moneyParticleSpawnRadius: 0.5
 --- !u!114 &747856375796901427
 MonoBehaviour:
   m_ObjectHideFlags: 0
