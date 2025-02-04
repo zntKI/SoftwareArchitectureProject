@@ -17,11 +17,15 @@ public class TowerController : MonoBehaviour
 
     private void Update()
     {
-        List<GameObject> targets = towerSelector.SelectTarget();
+        List<EnemyController> targets = towerSelector.SelectTarget();
 
         if (targets.Count != 0)
         {
-            attackType.Perform(targets);
+            attackType.SetUp(targets);
+        }
+        else
+        {
+            attackType.SetDown();
         }
     }
 }

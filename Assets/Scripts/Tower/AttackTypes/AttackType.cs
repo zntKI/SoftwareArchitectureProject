@@ -4,5 +4,6 @@ using UnityEngine;
 
 public abstract class AttackType : MonoBehaviour
 {
-    public abstract void Perform(List<GameObject> targets);
+    public abstract void SetUp(List<EnemyController> targets);
+    public abstract void SetDown();
 }

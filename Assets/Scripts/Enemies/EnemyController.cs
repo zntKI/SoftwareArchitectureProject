@@ -1,41 +1,81 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyModel))]
 [RequireComponent(typeof(MovementBehaviour))]
 public class EnemyController : MonoBehaviour
 {
+    public static event Action<EnemyController> OnDied;
+
+    private EnemyModel model;
+    private EnemyView view;
+
     private MovementBehaviour movementBehaviour;
 
-    void Awake()
-    {
-        MovementBehaviour.OnReachedEnd += ReachedEnd;
-    }
+    private bool isSlowedDown;
 
-    // Start is called before the first frame update
     void Start()
     {
+        model = GetComponent<EnemyModel>();
+        model.OnHealthZero += Died;
+
+        view = GetComponent<EnemyView>();
+
         movementBehaviour = GetComponent<MovementBehaviour>();
+        movementBehaviour.OnReachedEnd += ReachedEnd;
     }
 
-    // TODO: Do this in a differen class that abstracts the movement logic
     void Update()
     {
         movementBehaviour.DoMoving();
     }
 
-    void ReachedEnd(GameObject enemy)
+    public void TakeDamage(DamageAmount damageAmount)
     {
-        if (enemy == gameObject)
+        model.UpdateHealth(-damageAmount.Damage);
+        view.CheckHealth(model.Health);
+    }
+
+    public void ShouldBeSlowedDown(SlowDownAmount slowDownAmount)
+    {
+        if (!isSlowedDown)
         {
-            Destroy(gameObject);
-            // Also fire an event to increase the counter of enemies passed?
+            isSlowedDown = true;
+
+            model.UpdateSpeed(slowDownAmount.SlowDownPercantage);
         }
+    }
+
+    public void OnTargetZoneLeave()
+    {
+        if (isSlowedDown)
+        {
+            isSlowedDown = false;
+
+            model.ResetSpeed();
+        }
+    }
+
+    void ReachedEnd()
+    {
+        Destroy(gameObject);
+        // Also fire an event to increase the counter of enemies passed?
+    }
+
+    void Died()
+    {
+        Destroy(gameObject);
+
+        OnDied?.Invoke(this);
+        // Also fire an event to increase money?
     }
 
     void OnDestroy()
     {
-        MovementBehaviour.OnReachedEnd -= ReachedEnd;
+        if (movementBehaviour != null)
+            movementBehaviour.OnReachedEnd -= ReachedEnd;
     }
 }

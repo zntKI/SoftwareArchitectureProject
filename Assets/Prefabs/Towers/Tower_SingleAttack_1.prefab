@@ -116,7 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd6fbabb5704275438176617c74af7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
   shouldDraw: 1
   radius: 2
   color: {r: 0.5882353, g: 0.81568635, b: 0.95294124, a: 1}
@@ -171,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02350f026fc56d043b455ee7fdf6a293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 4618194068674505348, guid: c97cd380efae2b34ea653fb62afb6a55, type: 3}
 --- !u!114 &4843788362883205417
 MonoBehaviour:
   m_ObjectHideFlags: 0

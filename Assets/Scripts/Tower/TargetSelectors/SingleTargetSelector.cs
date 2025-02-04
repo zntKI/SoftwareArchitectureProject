@@ -11,20 +11,18 @@ public class SingleTargetSelector : TargetSelector
     {
         selectionRange = GetComponent<SelectionRange>();
 
-        selectedTargets = new List<GameObject>();
+        selectedTargets = new List<EnemyController>();
     }
 
     private void Update()
     {
-        SelectTarget();
     }
 
-    public override List<GameObject> SelectTarget()
+    public override List<EnemyController> SelectTarget()
     {
-        Debug.Log("In");
         // Selection
         // TODO: Think of smth better - maybe a game manager holds the enemies and you request when needed
-        var enemies = GameObject.FindGameObjectsWithTag("Target");
+        var enemies = FindObjectsOfType<EnemyController>();
         foreach (var enemy in enemies)
         {
             float distance = (enemy.transform.position - this.transform.position).magnitude;

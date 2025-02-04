@@ -5,10 +5,10 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent(typeof(MoveSpeed))]
 public class WaypointMovementBehaviour : MovementBehaviour
 {
-    private MoveSpeed moveSpeed;
+    private EnemyModel model;
+    private float speed;
 
     private Queue<GameObject> waypoints;
 
@@ -16,7 +16,8 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     void Start()
     {
-        moveSpeed = GetComponent<MoveSpeed>();
+        model = GetComponent<EnemyModel>();
+        speed = model.Speed;
 
         SetupCollections();
         currentTargetWaypoint = new Tuple<GameObject, DebugCircle>(null, null);
@@ -33,6 +34,14 @@ public class WaypointMovementBehaviour : MovementBehaviour
             waypoints.Enqueue(waypoint.gameObject);
         }
     }
+
+    void Update()
+    {
+        speed = model.Speed;
+    }
+
+    public void SetSpeed(float newSpeed)
+        => this.speed = newSpeed;
 
     public override void DoMoving()
     {
@@ -72,7 +81,7 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     void Move()
     {
-        var amountToMove = (currentTargetWaypoint.Item1.transform.position - this.transform.position).normalized * moveSpeed.MoveSpeeD * Time.deltaTime;
+        var amountToMove = (currentTargetWaypoint.Item1.transform.position - this.transform.position).normalized * speed * Time.deltaTime;
         transform.Translate(amountToMove);
     }
 

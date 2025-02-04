@@ -5,11 +5,11 @@ using UnityEngine;
 
 public abstract class MovementBehaviour : MonoBehaviour
 {
-    public static event Action<GameObject> OnReachedEnd;
+    public event Action OnReachedEnd;
 
     protected void ReachedEnd()
     {
-        OnReachedEnd?.Invoke(gameObject);
+        OnReachedEnd?.Invoke();
     }
 
     public abstract void DoMoving();
