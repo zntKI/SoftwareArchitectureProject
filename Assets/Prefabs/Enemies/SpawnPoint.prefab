@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7700174426587591481}
-  - component: {fileID: 7203059007290347455}
   - component: {fileID: 1981827268384187302}
   - component: {fileID: -4446531116142940576}
   - component: {fileID: 649418377644345963}
@@ -38,19 +37,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7203059007290347455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6084020854924815322}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d2cc6e883b5f674c9f8ef047e52b3a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentWave: 0
 --- !u!114 &1981827268384187302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,17 +49,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e9f6819ad95874c9ba072db6a4c967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allWavesProperties:
-  - weakEnemies: 5
-    strongEnemies: 0
-  - weakEnemies: 8
-    strongEnemies: 1
-  - weakEnemies: 12
-    strongEnemies: 3
-  - weakEnemies: 16
-    strongEnemies: 5
-  - weakEnemies: 20
-    strongEnemies: 8
 --- !u!114 &-4446531116142940576
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI moneyAmountText;
+    [SerializeField]
+    private TextMeshProUGUI enemiesAmountText;
 
     void Awake()
     {
@@ -23,16 +25,23 @@ public class UIManager : MonoBehaviour
             throw new InvalidOperationException("There can only be only one UIManager in the scene!");
         }
 
-        GameManager.OnMoneyUpdated += UpdateMoneyText;
+        BuildManager.OnMoneyUpdated += UpdateMoneyText;
+
+        WaveManager.OnUpdateEnemiesAmount += UpdateEnemyAmountsText;
     }
 
-    private void UpdateMoneyText(int newMoneyAmount)
+    void UpdateMoneyText(int newMoneyAmount)
     {
         moneyAmountText.text = newMoneyAmount.ToString();
     }
 
+    void UpdateEnemyAmountsText(int currAmount, int totalAmount)
+    {
+        enemiesAmountText.text = $"{currAmount}/{totalAmount}";
+    }
+
     void OnDestroy()
     {
-        GameManager.OnMoneyUpdated -= UpdateMoneyText;
+        BuildManager.OnMoneyUpdated -= UpdateMoneyText;
     }
 }

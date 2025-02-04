@@ -11,6 +11,8 @@ public class EnemyController : MonoBehaviour
     public static event Action<EnemyController> OnDied;
     public static event Action<int> OnMoneyDropped;
 
+    public static event Action<EnemyController> OnReachedEnd;
+
     private EnemyModel model;
     private EnemyView view;
 
@@ -62,6 +64,8 @@ public class EnemyController : MonoBehaviour
 
     void ReachedEnd()
     {
+        OnReachedEnd?.Invoke(this);
+
         Destroy(gameObject);
         // Also fire an event to increase the counter of enemies passed?
     }

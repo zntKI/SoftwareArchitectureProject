@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed:
-    moveSpeed: 1
+    moveSpeed: 1.5
   health:
     healthAmount: 5
   money:

@@ -10,6 +10,8 @@ using UnityEngine;
 [RequireComponent(typeof(SpawnSpeedStrategy))]
 public abstract class SpawnOrderStrategy : Strategy
 {
+    public static event Action<EnemyController> OnEnemySpawned;
+
     [SerializeField]
     protected GameObject enemyWeakPrefab;
     [SerializeField]
@@ -20,4 +22,9 @@ public abstract class SpawnOrderStrategy : Strategy
     public void SetWaveProperties(WaveEnemiesNum waveProperties)
         => currentWaveProperties = waveProperties;
     public abstract void PickEnemy();
+
+    protected void EnemySpawned(EnemyController spawnedEnemy)
+    {
+        OnEnemySpawned?.Invoke(spawnedEnemy);
+    }
 }

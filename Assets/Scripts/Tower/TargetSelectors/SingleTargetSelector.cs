@@ -21,9 +21,7 @@ public class SingleTargetSelector : TargetSelector
     public override List<EnemyController> SelectTarget()
     {
         // Selection
-        // TODO: Think of smth better - maybe a game manager holds the enemies and you request when needed
-        var enemies = FindObjectsOfType<EnemyController>();
-        foreach (var enemy in enemies)
+        foreach (var enemy in WaveManager.SpawnedEnemies)
         {
             float distance = (enemy.transform.position - this.transform.position).magnitude;
             if (distance <= selectionRange.Range && selectedTargets.Count == 0)

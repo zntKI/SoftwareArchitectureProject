@@ -21,8 +21,7 @@ public class MultipleTargetSelector : TargetSelector
     public override List<EnemyController> SelectTarget()
     {
         // Selection
-        var enemies = FindObjectsOfType<EnemyController>();
-        foreach (var enemy in enemies)
+        foreach (var enemy in WaveManager.SpawnedEnemies)
         {
             float distance = (enemy.transform.position - this.transform.position).magnitude;
             if (distance <= selectionRange.Range && !selectedTargets.Contains(enemy))

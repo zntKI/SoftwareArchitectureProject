@@ -6,37 +6,43 @@ using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour
 {
+    public static event Action OnBeginWave;
+
     public static GameManager Instance => instance;
     static GameManager instance;
 
-    public static event Action<int> OnMoneyUpdated;
-
-    private int moneyAmount;
+    public static bool IsGameOverWin => instance.isGameOverWin;
+    private bool isGameOverWin;
 
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject);
-            return; // just to be sure
+            throw new InvalidOperationException("There can only be only one GameManager in the scene!");
         }
 
-        EnemyController.OnMoneyDropped += UpdateMoney;
+        WaveManager.OnGameOver += GameOver;
     }
 
-    void UpdateMoney(int moneyToAdd)
+    void Start()
     {
-        instance.moneyAmount += moneyToAdd;
-        OnMoneyUpdated?.Invoke(instance.moneyAmount);
+        OnBeginWave?.Invoke();
+    }
+
+    void GameOver(bool result)
+    {
+        isGameOverWin = result;
+
+        // Switch to an end screen
+        // There, ask for the GameManager.IsGameOverWin
     }
 
     void OnDestroy()
     {
-        EnemyController.OnMoneyDropped -= UpdateMoney;
+        WaveManager.OnGameOver -= GameOver;
     }
 }

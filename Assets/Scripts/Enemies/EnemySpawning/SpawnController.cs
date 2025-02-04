@@ -4,38 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Contains information of the amount of enemies to be spawned in a given wave
-/// </summary>
-[Serializable]
-public class WaveEnemiesNum
-{
-    public int WeakEnemies => weakEnemies;
-    public int StrongEnemies => strongEnemies;
-
-    [SerializeField]
-    private int weakEnemies;
-    [SerializeField]
-    private int strongEnemies;
-
-    public void ReduceWeakEnemies()
-    {
-        weakEnemies--;
-        if (weakEnemies < 0)
-            weakEnemies = 0;
-    }
-
-    public void ReduceStrongEnemies()
-    {
-        strongEnemies--;
-        if (strongEnemies < 0)
-            strongEnemies = 0;
-    }
-
-    public bool IsFinished()
-        => weakEnemies == 0 && strongEnemies == 0;
-}
-
-/// <summary>
 /// State of spawning
 /// Not a full-blown FSM pattern thing since it may be an overhead
 /// </summary>
@@ -56,9 +24,6 @@ public enum SpawnState
 [RequireComponent(typeof(SpawnSpeedStrategyController))]
 public class SpawnController : MonoBehaviour
 {
-    [SerializeField]
-    [Tooltip("If you change amount of wave enemies num, also change the amount of waves in 'EnemiesSpawner'")]
-    private WaveEnemiesNum[] allWavesProperties;
     private WaveEnemiesNum currentWaveProperties;
 
     private SpawnOrderStrategyController spawnOrderStrategyController;
@@ -69,7 +34,11 @@ public class SpawnController : MonoBehaviour
 
     private SpawnState spawnState;
 
-    // Start is called before the first frame update
+    void Awake()
+    {
+        WaveManager.OnSetupSpawning += SetupSpawning;
+    }
+
     void Start()
     {
         spawnOrderStrategyController = GetComponent<SpawnOrderStrategyController>();
@@ -144,9 +113,9 @@ public class SpawnController : MonoBehaviour
     /// <summary>
     /// Called when a new wave should start spawning
     /// </summary>
-    public void SetupSpawning(WaveNum wave)
+    public void SetupSpawning(WaveEnemiesNum waveProperties)
     {
-        currentWaveProperties = allWavesProperties[(int)wave];
+        currentWaveProperties = waveProperties;
 
         if (currentSpawnOrderStrategy == null ||
             currentSpawnSpeedStrategy == null)
@@ -212,6 +181,8 @@ public class SpawnController : MonoBehaviour
 
     void OnDestroy()
     {
+        WaveManager.OnSetupSpawning -= SetupSpawning;
+
         spawnOrderStrategyController.OnStrategyEnabled -= CheckChangingOrderStrategy;
         spawnSpeedStrategyController.OnStrategyEnabled -= CheckChangingSpeedStrategy;
 
