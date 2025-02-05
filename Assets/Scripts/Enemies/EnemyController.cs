@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(DamageAmount damageAmount)
     {
         model.UpdateHealth(-damageAmount.Damage);
-        view.CheckHealth(model.Health);
+        view.CheckHealth(model.Health, model.InitialHealth);
     }
 
     public void ShouldBeSlowedDown(SlowDownAmount slowDownAmount)

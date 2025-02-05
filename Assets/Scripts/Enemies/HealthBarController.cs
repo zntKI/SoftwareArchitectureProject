@@ -4,20 +4,15 @@ using UnityEngine;
 
 public class HealthBarController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private float initialWidth;
+
     void Start()
     {
-        
+        initialWidth = transform.localScale.x;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdateHealthBar(float proportion)
     {
-        
-    }
-
-    public void UpdateHealthBar()
-    {
-        // Implement (update sprite renderer???)
+        transform.localScale = new Vector3(proportion * initialWidth, transform.localScale.y, transform.localScale.z);
     }
 }

@@ -55,6 +55,7 @@ public class WaveManager : MonoBehaviour
     // Enemies left before game over
     // <currentNumEnemiesPassed, enemyNumsPerWave[currentWave - 1]>
     public static event Action<int, int> OnUpdateEnemiesAmount;
+    public static event Action<int, int> OnUpdateWavesAmount;
 
     public static WaveManager Instance => instance;
     static WaveManager instance;
@@ -95,12 +96,15 @@ public class WaveManager : MonoBehaviour
     void Start()
     {
         spawnedEnemies = new List<EnemyController>();
+
+        StartSpawning();
     }
 
     void StartSpawning()
     {
         instance.currentWave = (WaveNum)((int)instance.currentWave + 1);
 
+        OnUpdateWavesAmount?.Invoke((int)instance.currentWave, allWavesProperties.Length);
         OnUpdateEnemiesAmount?.Invoke(currentNumEnemiesPassed, instance.enemyNumsPerWave[(int)instance.currentWave - 1]);
 
         OnSetupSpawning?.Invoke(instance.allWavesProperties[(int)instance.currentWave - 1]);
@@ -121,7 +125,7 @@ public class WaveManager : MonoBehaviour
         RemoveEnemy(enemyToRemove);
 
         currentNumEnemiesPassed++;
-        if (currentNumEnemiesPassed > instance.enemyNumsPerWave[(int)instance.currentWave - 1])
+        if (currentNumEnemiesPassed >= instance.enemyNumsPerWave[(int)instance.currentWave - 1])
         {
             OnGameOver?.Invoke(false);
         }

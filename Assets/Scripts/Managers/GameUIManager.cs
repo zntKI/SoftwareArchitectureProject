@@ -4,15 +4,22 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class GameUIManager : MonoBehaviour
 {
-    public static UIManager Instance => instance;
-    static UIManager instance;
+    public static event Action OnPauseMenuInteraction;
+
+    public static GameUIManager Instance => instance;
+    static GameUIManager instance;
 
     [SerializeField]
     private TextMeshProUGUI moneyAmountText;
     [SerializeField]
     private TextMeshProUGUI enemiesAmountText;
+    [SerializeField]
+    private TextMeshProUGUI wavesAmountText;
+
+    [SerializeField]
+    private RectTransform pauseMenu;
 
     void Awake()
     {
@@ -28,6 +35,21 @@ public class UIManager : MonoBehaviour
         BuildManager.OnMoneyUpdated += UpdateMoneyText;
 
         WaveManager.OnUpdateEnemiesAmount += UpdateEnemyAmountsText;
+        WaveManager.OnUpdateWavesAmount += UpdateWavesAmountText;
+    }
+
+    void Start()
+    {
+        pauseMenu.gameObject.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            OnPauseMenuInteraction?.Invoke();
+            pauseMenu.gameObject.SetActive(!pauseMenu.gameObject.activeInHierarchy);
+        }
     }
 
     void UpdateMoneyText(int newMoneyAmount)
@@ -40,8 +62,16 @@ public class UIManager : MonoBehaviour
         enemiesAmountText.text = $"{currAmount}/{totalAmount}";
     }
 
+    void UpdateWavesAmountText(int currAmount, int totalAmount)
+    {
+        wavesAmountText.text = $"{currAmount}/{totalAmount}";
+    }
+
     void OnDestroy()
     {
         BuildManager.OnMoneyUpdated -= UpdateMoneyText;
+
+        WaveManager.OnUpdateEnemiesAmount -= UpdateEnemyAmountsText;
+        WaveManager.OnUpdateWavesAmount -= UpdateWavesAmountText;
     }
 }

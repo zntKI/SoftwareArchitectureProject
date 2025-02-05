@@ -35,7 +35,7 @@ public class EnemyView : MonoBehaviour
         healthBar = transform.GetComponentInChildren<HealthBarController>();
     }
 
-    public void CheckHealth(float newHealth)
+    public void CheckHealth(float newHealth, float initialHealth)
     {
         if (newHealth <= healthAmountForSecondSpriteTransition)
         {
@@ -47,7 +47,7 @@ public class EnemyView : MonoBehaviour
         }
 
         // Update health bar
-        //healthBar.UpdateHealthBar();
+        healthBar.UpdateHealthBar(newHealth / initialHealth);
     }
 
     public void SpawnMoneyParticle(int moneyAmount)
