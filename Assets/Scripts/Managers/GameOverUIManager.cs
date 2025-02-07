@@ -28,7 +28,7 @@ public class GameOverUIManager : MonoBehaviour
 
     void Start()
     {
-        if (GameManager.IsGameOverWin)
+        if (GameManager.IsWaveOverWin)
         {
             gameOverWinPanel.gameObject.SetActive(true);
             gameOverLosePanel.gameObject.SetActive(false);

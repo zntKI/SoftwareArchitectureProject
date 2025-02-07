@@ -9,12 +9,13 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static event Action OnBeginWave;
+    public static event Action OnBeginBuilding;
 
     public static GameManager Instance => instance;
     static GameManager instance;
 
-    public static bool IsGameOverWin => instance.isGameOverWin;
-    private bool isGameOverWin;
+    public static bool IsWaveOverWin => instance.isWaveOverWin;
+    private bool isWaveOverWin;
 
     private float gameTimeScale = 1f;
 
@@ -31,7 +32,8 @@ public class GameManager : MonoBehaviour
             return; // just to be sure
         }
 
-        WaveManager.OnGameOver += GameOver;
+        WaveManager.OnWaveOver += WaveOver;
+        BuildManager.OnBuilingEnd += BuildingOver;
 
         GameUIManager.OnPauseMenuInteraction += StopPlayTime;
     }
@@ -83,12 +85,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GameOver(bool result)
+    void WaveOver(bool result, bool isLastWave)
     {
-        isGameOverWin = result;
+        isWaveOverWin = result;
 
-        // Switch to an end screen
-        LoadNextScene();
+        if ((isWaveOverWin && isLastWave) || !isWaveOverWin) // If win but last wave or lose in any wave
+            LoadNextScene();
+        else if (isWaveOverWin)
+        {
+            // Start build sess
+            OnBeginBuilding?.Invoke();
+        }
+    }
+
+    void BuildingOver()
+    {
+        OnBeginWave?.Invoke();
     }
 
     public void Quit()
@@ -102,8 +114,15 @@ public class GameManager : MonoBehaviour
 
     void OnDestroy()
     {
-        WaveManager.OnGameOver -= GameOver;
+        WaveManager.OnWaveOver -= WaveOver;
+        BuildManager.OnBuilingEnd -= BuildingOver;
 
         GameUIManager.OnPauseMenuInteraction -= StopPlayTime;
     }
+}
+
+public enum GameState
+{
+    Building,
+    Wave
 }

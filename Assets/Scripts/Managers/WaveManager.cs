@@ -50,8 +50,12 @@ public class WaveManager : MonoBehaviour
 {
     public static event Action<WaveEnemiesNum> OnSetupSpawning;
 
-    public static event Action<bool> OnGameOver;
+    /// <summary>
+    /// <result, isLastWave>
+    /// </summary>
+    public static event Action<bool, bool> OnWaveOver;
 
+    public static event Action<GameState> OnWaveStartUI;
     // Enemies left before game over
     // <currentNumEnemiesPassed, enemyNumsPerWave[currentWave - 1]>
     public static event Action<int, int> OnUpdateEnemiesAmount;
@@ -70,6 +74,9 @@ public class WaveManager : MonoBehaviour
     [SerializeField]
     private int[] enemyNumsPerWave;
     private int currentNumEnemiesPassed;
+
+    private int totalAmountOfEnemiesForCurrentWave;
+    private int currentEnemiesKilled;
 
     public static IReadOnlyCollection<EnemyController> SpawnedEnemies => instance.spawnedEnemies;
     private List<EnemyController> spawnedEnemies;
@@ -90,24 +97,35 @@ public class WaveManager : MonoBehaviour
         SpawnOrderStrategy.OnEnemySpawned += AddEnemy;
         EnemyController.OnReachedEnd += RemoveAndIncreaseEnemyPassed;
 
-        EnemyController.OnDied += RemoveEnemy;
+        EnemyController.OnDied += IncreaseAmountEnemiesKilled;
     }
 
     void Start()
     {
         spawnedEnemies = new List<EnemyController>();
 
-        StartSpawning();
+        //StartSpawning();
     }
 
     void StartSpawning()
     {
         instance.currentWave = (WaveNum)((int)instance.currentWave + 1);
 
+        // UI
+        OnWaveStartUI?.Invoke(GameState.Wave);
         OnUpdateWavesAmount?.Invoke((int)instance.currentWave, allWavesProperties.Length);
         OnUpdateEnemiesAmount?.Invoke(currentNumEnemiesPassed, instance.enemyNumsPerWave[(int)instance.currentWave - 1]);
 
-        OnSetupSpawning?.Invoke(instance.allWavesProperties[(int)instance.currentWave - 1]);
+
+        // Setup spawning
+        WaveEnemiesNum currentWaveProperties = instance.allWavesProperties[(int)instance.currentWave - 1];
+
+        currentNumEnemiesPassed = 0;
+
+        totalAmountOfEnemiesForCurrentWave = currentWaveProperties.WeakEnemies + currentWaveProperties.StrongEnemies;
+        currentEnemiesKilled = 0;
+
+        OnSetupSpawning?.Invoke(currentWaveProperties);
     }
 
     void AddEnemy(EnemyController newEnemy)
@@ -120,6 +138,17 @@ public class WaveManager : MonoBehaviour
         spawnedEnemies.Remove(enemyToRemove);
     }
 
+    void IncreaseAmountEnemiesKilled(EnemyController enemyToRemove)
+    {
+        RemoveEnemy(enemyToRemove);
+
+        currentEnemiesKilled++;
+        if (currentEnemiesKilled >= totalAmountOfEnemiesForCurrentWave)
+        {
+            OnWaveOver?.Invoke(true, (int)instance.currentWave == instance.allWavesProperties.Length);
+        }
+    }
+
     void RemoveAndIncreaseEnemyPassed(EnemyController enemyToRemove)
     {
         RemoveEnemy(enemyToRemove);
@@ -127,7 +156,7 @@ public class WaveManager : MonoBehaviour
         currentNumEnemiesPassed++;
         if (currentNumEnemiesPassed >= instance.enemyNumsPerWave[(int)instance.currentWave - 1])
         {
-            OnGameOver?.Invoke(false);
+            OnWaveOver?.Invoke(false, (int)instance.currentWave == instance.allWavesProperties.Length);
         }
 
         OnUpdateEnemiesAmount?.Invoke(currentNumEnemiesPassed, instance.enemyNumsPerWave[(int)instance.currentWave - 1]);
@@ -140,6 +169,6 @@ public class WaveManager : MonoBehaviour
         SpawnOrderStrategy.OnEnemySpawned -= AddEnemy;
         EnemyController.OnReachedEnd -= RemoveAndIncreaseEnemyPassed;
 
-        EnemyController.OnDied -= RemoveEnemy;
+        EnemyController.OnDied -= IncreaseAmountEnemiesKilled;
     }
 }

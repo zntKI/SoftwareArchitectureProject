@@ -76,8 +76,8 @@ public class EnemyController : MonoBehaviour
 
         Destroy(gameObject);
 
+        OnMoneyDropped?.Invoke(model.Money); // First do other calls before enemy death
         OnDied?.Invoke(this);
-        OnMoneyDropped?.Invoke(model.Money);
         // Also fire an event to increase money?
     }
 
