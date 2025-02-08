@@ -27,13 +27,13 @@ public class SingleTargetSelector : TargetSelector
             if (distance <= selectionRange.Range && selectedTargets.Count == 0)
             {
                 selectedTargets.Insert(0, enemy);
-                Debug.Log("Target in range!");
+                //Debug.Log("Target in range!");
             }
             else if (selectedTargets.Count != 0 &&
                 selectedTargets[0] == enemy && distance > selectionRange.Range)
             {
                 selectedTargets.Clear();
-                Debug.Log("Target out of range!");
+                //Debug.Log("Target out of range!");
             }
         }
 

@@ -16,12 +16,16 @@ public class SingleAttackType : AttackType
 
     private EnemyController currentTarget;
 
+    private float maxFollowDistance;
+
     private void Start()
     {
         damageAmount = GetComponent<DamageAmount>();
         attackInterval = GetComponent<AttackInterval>();
 
         timeCounter = attackInterval.AttackIntervalSec;
+
+        maxFollowDistance = GetComponent<SelectionRange>().Range;
     }
 
     void Update()
@@ -41,7 +45,7 @@ public class SingleAttackType : AttackType
     {
         // Spawn a projectile
         TargetFollowController spawnedProjectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity, transform.parent).GetComponent<TargetFollowController>();
-        spawnedProjectile.Init(currentTarget.transform, damageAmount);
+        spawnedProjectile.Init(currentTarget.transform, damageAmount, maxFollowDistance);
     }
 
     public override void SetUp(List<EnemyController> targets)

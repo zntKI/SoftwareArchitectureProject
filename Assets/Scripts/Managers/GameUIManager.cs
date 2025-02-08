@@ -1,13 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public struct TowerToBuyUIData
+public class TowerToBuyUIData
 {
+    public GameObject TowerPrefab => towerPrefab;
+    public GameObject SetTowerPrefab(GameObject towerPrefab)
+    {
+        this.towerPrefab = towerPrefab;
+        return this.towerPrefab;
+    }
+
+    private GameObject towerPrefab;
+
     public Image TowerSprite;
 
     public RectTransform TowerDetails;
@@ -22,6 +32,11 @@ public struct TowerToBuyUIData
 public class GameUIManager : MonoBehaviour
 {
     public static event Action OnPauseMenuInteraction;
+
+    /// <summary>
+    /// <The selected tower>
+    /// </summary>
+    public static event Action<GameObject> OnTowerSelection;
 
     public static GameUIManager Instance => instance;
     static GameUIManager instance;
@@ -67,7 +82,7 @@ public class GameUIManager : MonoBehaviour
 
         BuildManager.OnTimeUpdate += UpdateBuildTime;
         BuildManager.OnMoneyUpdated += UpdateMoneyText;
-        BuildManager.OnBuyingSetupUI += UpdateBuyPanel;
+        BuildManager.OnBuyingUpdateUI += UpdateBuyPanel;
 
         WaveManager.OnUpdateEnemiesAmount += UpdateEnemyAmountsText;
         WaveManager.OnUpdateWavesAmount += UpdateWavesAmountText;
@@ -128,10 +143,11 @@ public class GameUIManager : MonoBehaviour
 
         for (int i = 0; i < towersData.Count; i++)
         {
-            GameObject towerPrefab = towersData[i].towerPrefab;
+            GameObject towerPrefab = buyMenuTowers[i].SetTowerPrefab(towersData[i].towerPrefab);
 
             buyMenuTowers[i].TowerSprite.sprite = towerPrefab.GetComponent<SpriteRenderer>().sprite;
 
+            buyMenuTowers[i].TowerDetails.gameObject.SetActive(false);
             AttackType attType = towerPrefab.GetComponent<AttackType>();
             switch (attType)
             {
@@ -184,6 +200,32 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when on tower selector clicked in UI
+    /// </summary>
+    /// <param name="towerDetails">The UI object to set visibility</param>
+    public void SelectTower(RectTransform towerDetails)
+    {
+        if (towerDetails.gameObject.activeInHierarchy) // If unselecting a tower
+        {
+            towerDetails.gameObject.SetActive(false);
+            OnTowerSelection?.Invoke(null);
+            return;
+        }
+
+        // Check if other tower was selected beforehand
+        foreach (var tower in buyMenuTowers)
+        {
+            if (tower.TowerDetails.gameObject.activeInHierarchy)
+            {
+                tower.TowerDetails.gameObject.SetActive(false);
+            }
+        }
+
+        towerDetails.gameObject.SetActive(true);
+        OnTowerSelection?.Invoke(buyMenuTowers.First(t => t.TowerDetails == towerDetails).TowerPrefab);
+    }
+
     void UpdateEnemyAmountsText(int currAmount, int totalAmount)
     {
         enemiesAmountText.text = $"{currAmount}/{totalAmount}";
@@ -201,7 +243,7 @@ public class GameUIManager : MonoBehaviour
 
         BuildManager.OnTimeUpdate -= UpdateBuildTime;
         BuildManager.OnMoneyUpdated -= UpdateMoneyText;
-        BuildManager.OnBuyingSetupUI -= UpdateBuyPanel;
+        BuildManager.OnBuyingUpdateUI -= UpdateBuyPanel;
 
         WaveManager.OnUpdateEnemiesAmount -= UpdateEnemyAmountsText;
         WaveManager.OnUpdateWavesAmount -= UpdateWavesAmountText;

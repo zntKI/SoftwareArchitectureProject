@@ -8,6 +8,8 @@ TagManager:
   - Tower
   - Target
   - Waypoint
+  - Undefined
+  - BuildSpot
   layers:
   - Default
   - TransparentFX

@@ -46,11 +46,11 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            Time.timeScale = Mathf.Clamp(Time.timeScale + 0.1f, 0.1f, 1f);
+            Time.timeScale = Mathf.Clamp(Time.timeScale + 0.1f, 0.1f, 2f);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            Time.timeScale = Mathf.Clamp(Time.timeScale - 0.1f, 0.1f, 1f);
+            Time.timeScale = Mathf.Clamp(Time.timeScale - 0.1f, 0.1f, 2f);
         }
     }
 
