@@ -23,9 +23,9 @@ public class SingleAttackType : AttackType
         damageAmount = GetComponent<DamageAmount>();
         attackInterval = GetComponent<AttackInterval>();
 
-        timeCounter = attackInterval.AttackIntervalSec;
+        timeCounter = attackInterval.Value;
 
-        maxFollowDistance = GetComponent<SelectionRange>().Range;
+        maxFollowDistance = GetComponent<SelectionRange>().Value;
     }
 
     void Update()
@@ -33,7 +33,7 @@ public class SingleAttackType : AttackType
         if (currentTarget != null)
         {
             timeCounter += Time.deltaTime;
-            if (timeCounter > attackInterval.AttackIntervalSec)
+            if (timeCounter > attackInterval.Value)
             {
                 Perform();
                 timeCounter = 0f;

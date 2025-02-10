@@ -29,6 +29,19 @@ public class TowerToBuyUIData
     public TextMeshProUGUI Price;
 }
 
+[Serializable]
+public class TowerToUpgradeUIData
+{
+    public TextMeshProUGUI Range;
+    public TextMeshProUGUI DamageDebuff;
+    public TextMeshProUGUI UpgradeBtnText;
+    public Image UpgradeBtnImage;
+    public Button UpgradeBtn;
+    public TextMeshProUGUI UpgradePrice;
+
+    public TextMeshProUGUI SellPrice;
+}
+
 public class GameUIManager : MonoBehaviour
 {
     public static event Action OnPauseMenuInteraction;
@@ -43,11 +56,11 @@ public class GameUIManager : MonoBehaviour
 
     [Header("Game state UI containers")]
     [SerializeField]
-    private RectTransform waveUICont;
+    private GameObject waveUICont;
     [SerializeField]
-    private RectTransform buildingUICont;
+    private GameObject buildingUICont;
 
-    [Header("Build Manager UI")]
+    [Header("Build Manager Buying UI")]
     [SerializeField]
     private TextMeshProUGUI timeAmountText;
     [SerializeField]
@@ -55,6 +68,13 @@ public class GameUIManager : MonoBehaviour
 
     [SerializeField]
     private List<TowerToBuyUIData> buyMenuTowers;
+
+    [Header("Build Manager Upgrading UI")]
+    [SerializeField]
+    private GameObject upgradeSellPanel;
+
+    [SerializeField]
+    private TowerToUpgradeUIData towerToUpgradeUIData;
 
     [Header("Wave Manager UI")]
     [SerializeField]
@@ -64,7 +84,7 @@ public class GameUIManager : MonoBehaviour
 
     [Header("Pause Meny UI container")]
     [SerializeField]
-    private RectTransform pauseMenu;
+    private GameObject pauseMenu;
 
     void Awake()
     {
@@ -83,6 +103,8 @@ public class GameUIManager : MonoBehaviour
         BuildManager.OnTimeUpdate += UpdateBuildTime;
         BuildManager.OnMoneyUpdated += UpdateMoneyText;
         BuildManager.OnBuyingUpdateUI += UpdateBuyPanel;
+        BuildManager.OnUpgradePanelModifyVisibility += ModifyUpgradeSellPanelVisibility;
+        BuildManager.OnUpgradingUpdateUI += UpdateUpgradePanel;
 
         WaveManager.OnUpdateEnemiesAmount += UpdateEnemyAmountsText;
         WaveManager.OnUpdateWavesAmount += UpdateWavesAmountText;
@@ -90,7 +112,7 @@ public class GameUIManager : MonoBehaviour
 
     void Start()
     {
-        pauseMenu.gameObject.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 
     void Update()
@@ -98,7 +120,7 @@ public class GameUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             OnPauseMenuInteraction?.Invoke();
-            pauseMenu.gameObject.SetActive(!pauseMenu.gameObject.activeInHierarchy);
+            pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
         }
     }
 
@@ -108,14 +130,14 @@ public class GameUIManager : MonoBehaviour
         {
             case GameState.Building:
 
-                buildingUICont.gameObject.SetActive(true);
-                waveUICont.gameObject.SetActive(false);
+                buildingUICont.SetActive(true);
+                waveUICont.SetActive(false);
 
                 break;
             case GameState.Wave:
 
-                waveUICont.gameObject.SetActive(true);
-                buildingUICont.gameObject.SetActive(false);
+                waveUICont.SetActive(true);
+                buildingUICont.SetActive(false);
 
                 break;
             default:
@@ -131,6 +153,16 @@ public class GameUIManager : MonoBehaviour
     void UpdateMoneyText(int newMoneyAmount)
     {
         moneyAmountText.text = newMoneyAmount.ToString();
+    }
+
+    void UpdateEnemyAmountsText(int currAmount, int totalAmount)
+    {
+        enemiesAmountText.text = $"{currAmount}/{totalAmount}";
+    }
+
+    void UpdateWavesAmountText(int currAmount, int totalAmount)
+    {
+        wavesAmountText.text = $"{currAmount}/{totalAmount}";
     }
 
     void UpdateBuyPanel(List<BuyableTower> towersData, int currentAmountMoney)
@@ -164,10 +196,10 @@ public class GameUIManager : MonoBehaviour
                     Debug.LogError("Invalid AttackType!");
                     return;
             }
-            buyMenuTowers[i].Range.text = $"Range: {towerPrefab.GetComponent<SelectionRange>().Range}";
+            buyMenuTowers[i].Range.text = $"Range: {towerPrefab.GetComponent<SelectionRange>().Value}";
             if (towerPrefab.TryGetComponent<DamageAmount>(out DamageAmount damageAmount))
             {
-                buyMenuTowers[i].Damage.text = $"Damage: {damageAmount.Damage}";
+                buyMenuTowers[i].Damage.text = $"Damage: {damageAmount.Value}";
             }
             else
             {
@@ -175,7 +207,7 @@ public class GameUIManager : MonoBehaviour
             }
             if (towerPrefab.TryGetComponent<AttackInterval>(out AttackInterval attackInterval))
             {
-                buyMenuTowers[i].AttackInterval.text = $"Interval: {attackInterval.AttackIntervalSec}";
+                buyMenuTowers[i].AttackInterval.text = $"Interval: {attackInterval.Value}";
             }
             else
             {
@@ -226,14 +258,70 @@ public class GameUIManager : MonoBehaviour
         OnTowerSelection?.Invoke(buyMenuTowers.First(t => t.TowerDetails == towerDetails).TowerPrefab);
     }
 
-    void UpdateEnemyAmountsText(int currAmount, int totalAmount)
+    void ModifyUpgradeSellPanelVisibility()
     {
-        enemiesAmountText.text = $"{currAmount}/{totalAmount}";
+        upgradeSellPanel.SetActive(!upgradeSellPanel.activeInHierarchy);
     }
 
-    void UpdateWavesAmountText(int currAmount, int totalAmount)
+    void UpdateUpgradePanel(TowerController tower, int currentAmountMoney)
     {
-        wavesAmountText.text = $"{currAmount}/{totalAmount}";
+        if (!upgradeSellPanel.activeInHierarchy)
+        {
+            ModifyUpgradeSellPanelVisibility();
+        }
+
+        TowerModel model = tower.GetComponent<TowerModel>();
+
+        if (tower.IsLastLevel())
+        {
+            ModifyUpgradeDetailsVisibility(false);
+        }
+        else
+        {
+            ModifyUpgradeDetailsVisibility(true);
+
+            towerToUpgradeUIData.Range.text = $"Range: +{model.UpgradeRange} = {model.CurrentRange + model.UpgradeRange}";
+            towerToUpgradeUIData.DamageDebuff.text = $"Damage/Debuff: +{model.UpgradeDamageDebuff} = {model.CurrentDamageDebuff + model.UpgradeDamageDebuff}";
+            towerToUpgradeUIData.UpgradePrice.text = $"Price: {model.UpgradePrice}";
+
+            if (model.UpgradePrice <= currentAmountMoney)
+            {
+                towerToUpgradeUIData.UpgradeBtnText.color = new Color(
+                    towerToUpgradeUIData.UpgradeBtnText.color.r, towerToUpgradeUIData.UpgradeBtnText.color.g, towerToUpgradeUIData.UpgradeBtnText.color.b,
+                    1f);
+                towerToUpgradeUIData.UpgradeBtnImage.color = new Color(
+                    towerToUpgradeUIData.UpgradeBtnImage.color.r, towerToUpgradeUIData.UpgradeBtnImage.color.g, towerToUpgradeUIData.UpgradeBtnImage.color.b,
+                    1f);
+
+                towerToUpgradeUIData.UpgradeBtn.enabled = true;
+
+                towerToUpgradeUIData.UpgradePrice.color = Color.green;
+            }
+            else
+            {
+                towerToUpgradeUIData.UpgradeBtnText.color = new Color(
+                    towerToUpgradeUIData.UpgradeBtnText.color.r, towerToUpgradeUIData.UpgradeBtnText.color.g, towerToUpgradeUIData.UpgradeBtnText.color.b,
+                    0.4f);
+                towerToUpgradeUIData.UpgradeBtnImage.color = new Color(
+                    towerToUpgradeUIData.UpgradeBtnImage.color.r, towerToUpgradeUIData.UpgradeBtnImage.color.g, towerToUpgradeUIData.UpgradeBtnImage.color.b,
+                    0.4f);
+
+                towerToUpgradeUIData.UpgradeBtn.enabled = false;
+
+                towerToUpgradeUIData.UpgradePrice.color = Color.red;
+            }
+        }
+
+        towerToUpgradeUIData.SellPrice.text = $"Get: {model.SellPrice}";
+    }
+
+    void ModifyUpgradeDetailsVisibility(bool shouldShow)
+    {
+        towerToUpgradeUIData.Range.gameObject.SetActive(shouldShow);
+        towerToUpgradeUIData.DamageDebuff.gameObject.SetActive(shouldShow);
+        towerToUpgradeUIData.UpgradePrice.gameObject.SetActive(shouldShow);
+
+        towerToUpgradeUIData.UpgradeBtn.enabled = false;
     }
 
     void OnDestroy()
@@ -244,6 +332,8 @@ public class GameUIManager : MonoBehaviour
         BuildManager.OnTimeUpdate -= UpdateBuildTime;
         BuildManager.OnMoneyUpdated -= UpdateMoneyText;
         BuildManager.OnBuyingUpdateUI -= UpdateBuyPanel;
+        BuildManager.OnUpgradePanelModifyVisibility -= ModifyUpgradeSellPanelVisibility;
+        BuildManager.OnUpgradingUpdateUI -= UpdateUpgradePanel;
 
         WaveManager.OnUpdateEnemiesAmount -= UpdateEnemyAmountsText;
         WaveManager.OnUpdateWavesAmount -= UpdateWavesAmountText;

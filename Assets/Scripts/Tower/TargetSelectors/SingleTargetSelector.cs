@@ -24,13 +24,13 @@ public class SingleTargetSelector : TargetSelector
         foreach (var enemy in WaveManager.SpawnedEnemies)
         {
             float distance = (enemy.transform.position - this.transform.position).magnitude;
-            if (distance <= selectionRange.Range && selectedTargets.Count == 0)
+            if (distance <= selectionRange.Value && selectedTargets.Count == 0)
             {
                 selectedTargets.Insert(0, enemy);
                 //Debug.Log("Target in range!");
             }
             else if (selectedTargets.Count != 0 &&
-                selectedTargets[0] == enemy && distance > selectionRange.Range)
+                selectedTargets[0] == enemy && distance > selectionRange.Value)
             {
                 selectedTargets.Clear();
                 //Debug.Log("Target out of range!");

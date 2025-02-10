@@ -24,12 +24,12 @@ public class MultipleTargetSelector : TargetSelector
         foreach (var enemy in WaveManager.SpawnedEnemies)
         {
             float distance = (enemy.transform.position - this.transform.position).magnitude;
-            if (distance <= selectionRange.Range && !selectedTargets.Contains(enemy))
+            if (distance <= selectionRange.Value && !selectedTargets.Contains(enemy))
             {
                 selectedTargets.Add(enemy);
                 //Debug.Log("Target in range!" + selectedTargets.Count);
             }
-            else if (selectedTargets.Contains(enemy) && distance > selectionRange.Range)
+            else if (selectedTargets.Contains(enemy) && distance > selectionRange.Value)
             {
                 selectedTargets.Remove(enemy);
                 enemy.OnTargetZoneLeave();

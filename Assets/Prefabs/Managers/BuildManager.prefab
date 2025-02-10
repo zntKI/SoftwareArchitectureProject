@@ -45,10 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildTimeSec: 30
-  buyables:
-  - towerPrefab: {fileID: 5753262442931659193, guid: 28fa401dd091eab408661bb8a9e62c61, type: 3}
-    price: 5
-  - towerPrefab: {fileID: 5753262442931659193, guid: 8126840058f554645ba8465514d76b7b, type: 3}
-    price: 8
-  - towerPrefab: {fileID: 5753262442931659193, guid: d97fe7668a7791e4ca30bd20a027cf59, type: 3}
-    price: 5
+  moneyAmount: 0
+  buyableTowers:
+  - {fileID: 5753262442931659193, guid: 28fa401dd091eab408661bb8a9e62c61, type: 3}
+  - {fileID: 5753262442931659193, guid: 8126840058f554645ba8465514d76b7b, type: 3}
+  - {fileID: 5753262442931659193, guid: d97fe7668a7791e4ca30bd20a027cf59, type: 3}
+  buildSpotPrefab: {fileID: 7348077590146876102, guid: 2078182e2a31c9b488a9718a1f4d5c15, type: 3}

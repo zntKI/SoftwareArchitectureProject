@@ -26,9 +26,9 @@ public class MultipleAttackType : AttackType
 
         currentTargets = new List<EnemyController>();
 
-        timeCounter = attackInterval.AttackIntervalSec;
+        timeCounter = attackInterval.Value;
 
-        maxFollowDistance = GetComponent<SelectionRange>().Range;
+        maxFollowDistance = GetComponent<SelectionRange>().Value;
     }
 
     void Update()
@@ -36,7 +36,7 @@ public class MultipleAttackType : AttackType
         if (currentTargets.Count > 0)
         {
             timeCounter += Time.deltaTime;
-            if (timeCounter > attackInterval.AttackIntervalSec)
+            if (timeCounter > attackInterval.Value)
             {
                 Perform();
                 timeCounter = 0f;

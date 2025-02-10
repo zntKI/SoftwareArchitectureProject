@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyModel))]
+[RequireComponent(typeof(EnemyView))]
 [RequireComponent(typeof(MovementBehaviour))]
 public class EnemyController : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class EnemyController : MonoBehaviour
 
     public void TakeDamage(DamageAmount damageAmount)
     {
-        model.UpdateHealth(-damageAmount.Damage);
+        model.UpdateHealth(-damageAmount.Value);
         view.CheckHealth(model.Health, model.InitialHealth);
     }
 
@@ -48,7 +49,7 @@ public class EnemyController : MonoBehaviour
         {
             isSlowedDown = true;
 
-            model.UpdateSpeed(slowDownAmount.SlowDownPercantage);
+            model.UpdateSpeed(slowDownAmount.Value);
         }
     }
 
