@@ -137,11 +137,11 @@ public class GameUIManager : MonoBehaviour
     {
         if (towersData.Count > buyMenuTowers.Count)
         {
-            Debug.LogError("Cannot have more towers for buying than slots in the UI");
-            return;
+            Debug.LogWarning("Cannot have more towers for buying than slots in the UI");
         }
 
-        for (int i = 0; i < towersData.Count; i++)
+        int iterator = towersData.Count < buyMenuTowers.Count ? towersData.Count : buyMenuTowers.Count;
+        for (int i = 0; i < iterator; i++)
         {
             GameObject towerPrefab = buyMenuTowers[i].SetTowerPrefab(towersData[i].towerPrefab);
 
