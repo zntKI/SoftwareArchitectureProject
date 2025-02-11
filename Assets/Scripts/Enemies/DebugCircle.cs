@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Draws a debug circle around an object making it more intuitive and easy to work with
+/// Also used mid-game for its radius
+/// </summary>
 public class DebugCircle : MonoBehaviour
 {
     public float Radius => radius;

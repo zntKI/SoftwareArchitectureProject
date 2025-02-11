@@ -943,6 +943,7 @@ RectTransform:
   m_Children:
   - {fileID: 137440931}
   - {fileID: 1290704961}
+  - {fileID: 840812879}
   m_Father: {fileID: 1174542214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2263,6 +2264,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3134324946220243771, guid: 120e0028aa4c40340b012010c2c0efc9, type: 3}
   m_PrefabInstance: {fileID: 831177986}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &840812878
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 840812879}
+  m_Layer: 5
+  m_Name: UpgradeSellCont
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &840812879
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840812878}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 575824042}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &854543567
 GameObject:
   m_ObjectHideFlags: 0
@@ -3334,8 +3370,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 488dd5658b8c6ec4baed7a31a0dae618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waveUICont: {fileID: 1249714885}
-  buildingUICont: {fileID: 575824042}
+  waveUICont: {fileID: 1249714884}
+  buildingUICont: {fileID: 575824041}
   timeAmountText: {fileID: 722440051}
   moneyAmountText: {fileID: 1661796029}
   buyMenuTowers:
@@ -3360,9 +3396,18 @@ MonoBehaviour:
     Damage: {fileID: 1083288656}
     AttackInterval: {fileID: 1686551410}
     Price: {fileID: 854543569}
+  upgradeSellPanel: {fileID: 840812878}
+  towerToUpgradeUIData:
+    Range: {fileID: 0}
+    DamageDebuff: {fileID: 0}
+    UpgradeBtnText: {fileID: 0}
+    UpgradeBtnImage: {fileID: 0}
+    UpgradeBtn: {fileID: 0}
+    UpgradePrice: {fileID: 0}
+    SellPrice: {fileID: 0}
   enemiesAmountText: {fileID: 826770513}
   wavesAmountText: {fileID: 1927824223}
-  pauseMenu: {fileID: 998498753}
+  pauseMenu: {fileID: 998498752}
 --- !u!1 &1213803302
 GameObject:
   m_ObjectHideFlags: 0

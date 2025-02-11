@@ -3,8 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Part of the MVP pattern for Tower<br></br>
+/// Handles all visuals regarding Tower
+/// </summary>
 public class TowerView : MonoBehaviour
 {
+    /// <summary>
+    /// Tower Sprites indicating each level of Tower
+    /// </summary>
     [SerializeField]
     private Sprite[] diffLevelSprites;
 
@@ -17,13 +24,19 @@ public class TowerView : MonoBehaviour
     /// </summary>
     private SpriteRenderer childSRVisibleWhileUpgrading;
 
-    void Start()
+    /// <summary>
+    /// Need to be called before Start
+    /// </summary>
+    public void Init()
     {
         InitSprite();
 
         childSRVisibleWhileUpgrading = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Helper method to setup sprite logic
+    /// </summary>
     void InitSprite()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -46,14 +59,23 @@ public class TowerView : MonoBehaviour
         spriteRenderer.sprite = diffLevelSprites[currentSpriteIndex];
     }
 
+    /// <summary>
+    /// Check if Tower at last level
+    /// </summary>
     public bool IsAtLastSprite()
         => currentSpriteIndex == diffLevelSprites.Length - 1;
 
+    /// <summary>
+    /// Hides/shows outline depending on whether the Tower is selected for Upgrading/Selling
+    /// </summary>
     public void UpdateOutline()
     {
         childSRVisibleWhileUpgrading.enabled = !childSRVisibleWhileUpgrading.enabled;
     }
 
+    /// <summary>
+    /// Called on Tower Upgrade to update Tower visuals accordingly
+    /// </summary>
     public void Upgrade()
     {
         currentSpriteIndex++;

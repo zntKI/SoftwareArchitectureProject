@@ -14,11 +14,13 @@ public class StrongFirstOrderStrategy : SpawnOrderStrategy
         if (currentWaveProperties.StrongEnemies > 0)
         {
             spawnedEnemy = Instantiate(enemyStrongPrefab, this.transform.position, Quaternion.identity).GetComponent<EnemyController>();
+            spawnedEnemy.Init();
             currentWaveProperties.ReduceStrongEnemies();
         }
         else if (currentWaveProperties.WeakEnemies > 0)
         {
             spawnedEnemy = Instantiate(enemyWeakPrefab, this.transform.position, Quaternion.identity).GetComponent<EnemyController>();
+            spawnedEnemy.Init();
             currentWaveProperties.ReduceWeakEnemies();
         }
 

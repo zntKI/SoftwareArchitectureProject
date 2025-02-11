@@ -205,6 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 062d9a89c7b144240852e986193ee4fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyColorWhenSlowedDown: {r: 0.34509805, g: 0.34509805, b: 1, a: 1}
 --- !u!114 &3901152962937495190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,6 +235,7 @@ MonoBehaviour:
   rangeUpgradePerLevel: 0.3
   damageOrDebuffUpgradeLevel: 0.3
   sellPrice: 4
+  priceAddAmount: 0
 --- !u!114 &-482748751689555131
 MonoBehaviour:
   m_ObjectHideFlags: 0

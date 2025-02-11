@@ -4,14 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Used only when the value of the property is to be retrieved
-/// and modifying is not allowed
+/// A class encapsulating all functionalities regarding Enemy Speed<br></br>
+/// Serializable to be visible for the inspector
 /// </summary>
-//public interface IReadOnlyValue<T>
-//{
-//    T Value { get; }
-//}
-
 [Serializable]
 public class Speed
 {
@@ -37,6 +32,10 @@ public class Speed
     }
 }
 
+/// <summary>
+/// A class encapsulating all functionalities regarding Enemy Health<br></br>
+/// Serializable to be visible for the inspector
+/// </summary>
 [Serializable]
 public class Health
 {
@@ -65,6 +64,10 @@ public class Health
     }
 }
 
+/// <summary>
+/// A class encapsulating all functionalities regarding Enemy Money<br></br>
+/// Serializable to be visible for the inspector
+/// </summary>
 [Serializable]
 public class Money
 {
@@ -74,6 +77,10 @@ public class Money
     private int moneyAmount;
 }
 
+/// <summary>
+/// Part of the MVP pattern for Enemy<br></br>
+/// Handles all data regarding Enemy
+/// </summary>
 [RequireComponent(typeof(EnemyView))]
 public class EnemyModel : MonoBehaviour
 {
@@ -101,10 +108,6 @@ public class EnemyModel : MonoBehaviour
         speed.Init();
     }
 
-    void Start()
-    {
-    }
-
     /// <summary>
     /// Updates the speed by a given amount
     /// </summary>
@@ -114,6 +117,9 @@ public class EnemyModel : MonoBehaviour
         speed.SetSpeed(portionOfOriginalSpeed);
     }
 
+    /// <summary>
+    /// Sets speed to initial speed
+    /// </summary>
     public void ResetSpeed()
     {
         speed.ResetSpeed();

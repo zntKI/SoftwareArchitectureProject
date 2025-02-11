@@ -333,6 +333,7 @@ MonoBehaviour:
   rangeUpgradePerLevel: 0.5
   damageOrDebuffUpgradeLevel: 0.5
   sellPrice: 4
+  priceAddAmount: 0
 --- !u!114 &4652988749655464109
 MonoBehaviour:
   m_ObjectHideFlags: 0

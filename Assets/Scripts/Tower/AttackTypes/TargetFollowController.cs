@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A class defining the behaviour of all target-follow projectiles
+/// </summary>
 public class TargetFollowController : MonoBehaviour
 {
     [SerializeField]
@@ -14,7 +17,7 @@ public class TargetFollowController : MonoBehaviour
     private float maxFollowRange;
 
     private Transform target;
-    private DamageAmount targetDamageAmount;
+    private IPropertyReadOnlyValue<float> targetDamageAmount;
 
     private Vector3 dir;
 
@@ -23,11 +26,10 @@ public class TargetFollowController : MonoBehaviour
         EnemyController.OnDied += CheckIfSwitchFollowState;
     }
 
-    void Start()
-    {
-    }
-
-    public void Init(Transform targetToSet, DamageAmount damageToDeal, float maxFollowRange)
+    /// <summary>
+    /// Called right after being created
+    /// </summary>
+    public void Init(Transform targetToSet, IPropertyReadOnlyValue<float> damageToDeal, float maxFollowRange)
     {
         followState = FollowState.TargetFollow;
 
@@ -45,15 +47,15 @@ public class TargetFollowController : MonoBehaviour
         {
             case FollowState.None:
                 break;
-            case FollowState.TargetFollow:
+            case FollowState.TargetFollow: // Follow target by facing towards it
 
                 dir = (target.position - transform.position).normalized;
                 transform.up = dir;
 
                 break;
-            case FollowState.DirectionFollow:
+            case FollowState.DirectionFollow: // Follow a given direction
 
-                if ((transform.position - startPos).magnitude > maxFollowRange)
+                if ((transform.position - startPos).magnitude > maxFollowRange) // If reached max distance
                 {
                     Destroy(gameObject);
                     return;
@@ -67,6 +69,9 @@ public class TargetFollowController : MonoBehaviour
         transform.position += dir * moveSpeed * Time.deltaTime;
     }
     
+    /// <summary>
+    /// Called when Enemy dies and checks if the Enemy is the target, switch to the DirectionFollow state
+    /// </summary>
     void CheckIfSwitchFollowState(EnemyController controller)
     {
         // Check if the same enemy has died
@@ -76,11 +81,13 @@ public class TargetFollowController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Registers collision with Enemy and inflicted damage
+    /// </summary>
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<EnemyController>(out EnemyController enemy))
         {
-            //Debug.Log("TakeDamage");
             enemy.TakeDamage(targetDamageAmount);
             Destroy(gameObject);
         }
@@ -95,6 +102,6 @@ public class TargetFollowController : MonoBehaviour
 public enum FollowState
 {
     None,
-    TargetFollow,
-    DirectionFollow,
+    TargetFollow, // Follow directly target
+    DirectionFollow, // Follow just direction if target destroyed
 }

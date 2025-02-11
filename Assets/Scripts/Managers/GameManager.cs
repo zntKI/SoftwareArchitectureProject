@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Main Singleton manager, responsible for switching between GameStates(Building and Spawning) and Scenes, and controlling the time scale
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static event Action OnBeginWave;
@@ -14,8 +17,18 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => instance;
     static GameManager instance;
 
+    /// <summary>
+    /// Used by the GameOverUIManager to determine which canvas to display
+    /// </summary>
     public static bool IsWaveOverWin => instance.isWaveOverWin;
     private bool isWaveOverWin;
+
+    /// <summary>
+    /// Used both by BuildManager and WaveManager to decide whether to start gameplay with Building or with Wave Spawning
+    /// </summary>
+    public static bool IsBuildFirst => instance.isBuildFirst;
+    [SerializeField]
+    private bool isBuildFirst = true;
 
     private float gameTimeScale = 1f;
 
@@ -33,17 +46,14 @@ public class GameManager : MonoBehaviour
         }
 
         WaveManager.OnWaveOver += WaveOver;
-        BuildManager.OnBuilingEnd += BuildingOver;
+        BuildManager.OnBuildingEnd += BuildingOver;
 
         GameUIManager.OnPauseMenuInteraction += StopPlayTime;
     }
 
-    void Start()
-    {
-    }
-
     void Update()
     {
+        // Input handling for time scale change
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Time.timeScale = Mathf.Clamp(Time.timeScale + 0.1f, 0.1f, 2f);
@@ -54,7 +64,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LoadNextScene()
+    void LoadNextScene()
     {
         int sceneBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
         if (sceneBuildIndex >= SceneManager.sceneCountInBuildSettings)
@@ -65,6 +75,9 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneBuildIndex);
     }
 
+    /// <summary>
+    /// Called from UI button to load the StartMenuScene
+    /// </summary>
     public void LoadFirstScene()
     {
         Time.timeScale = 1f;
@@ -72,6 +85,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    /// <summary>
+    /// Called when PauseMenu gets Opened/Closed<br></br>
+    /// Sets time scale temporarily
+    /// </summary>
     void StopPlayTime()
     {
         if (Time.timeScale != 0)
@@ -85,6 +102,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Registers an Event from WaveManager when spawning enemies has ended
+    /// </summary>
+    /// <param name="result">Whether the wave was survived or not</param>
+    /// <param name="isLastWave"></param>
     void WaveOver(bool result, bool isLastWave)
     {
         isWaveOverWin = result;
@@ -98,8 +120,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Registers an Event from BuildManager when building has ended
+    /// </summary>
     void BuildingOver()
     {
+        // Start wave spawning
         OnBeginWave?.Invoke();
     }
 
@@ -115,12 +141,16 @@ public class GameManager : MonoBehaviour
     void OnDestroy()
     {
         WaveManager.OnWaveOver -= WaveOver;
-        BuildManager.OnBuilingEnd -= BuildingOver;
+        BuildManager.OnBuildingEnd -= BuildingOver;
 
         GameUIManager.OnPauseMenuInteraction -= StopPlayTime;
     }
 }
 
+/// <summary>
+/// Used for indicating current game state<br></br>
+/// Used by GameUIManager
+/// </summary>
 public enum GameState
 {
     Building,

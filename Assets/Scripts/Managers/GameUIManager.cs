@@ -6,6 +6,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// A class encapsulating all UI elements' reference for a tower in the Buy UI panel<br></br>
+/// Serializable to be visible for the inspector
+/// </summary>
 [Serializable]
 public class TowerToBuyUIData
 {
@@ -29,6 +33,10 @@ public class TowerToBuyUIData
     public TextMeshProUGUI Price;
 }
 
+/// <summary>
+/// A class encapsulating all UI elements for a tower in the Upgrade/Sell UI panel<br></br>
+/// Serializable to be visible for the inspector
+/// </summary>
 [Serializable]
 public class TowerToUpgradeUIData
 {
@@ -42,6 +50,9 @@ public class TowerToUpgradeUIData
     public TextMeshProUGUI SellPrice;
 }
 
+/// <summary>
+/// GameUI Singleton manager, responsible for appropriately displaying all HUD elements as well as switching between them
+/// </summary>
 public class GameUIManager : MonoBehaviour
 {
     public static event Action OnPauseMenuInteraction;
@@ -117,13 +128,16 @@ public class GameUIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab)) // Open/Close Pause Menu
         {
             OnPauseMenuInteraction?.Invoke();
             pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
         }
     }
 
+    /// <summary>
+    /// Switch between the HUD for the different GameStates - Building and Wave Spawning
+    /// </summary>
     void UpdateGameStateUI(GameState newState)
     {
         switch (newState)
@@ -131,6 +145,7 @@ public class GameUIManager : MonoBehaviour
             case GameState.Building:
 
                 buildingUICont.SetActive(true);
+                upgradeSellPanel.SetActive(false); // Just in case
                 waveUICont.SetActive(false);
 
                 break;
@@ -145,26 +160,43 @@ public class GameUIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the remaining time of the build sess
+    /// </summary>
     void UpdateBuildTime(int time)
     {
         timeAmountText.text = time.ToString();
     }
 
+    /// <summary>
+    /// Updates the money UI element
+    /// </summary>
     void UpdateMoneyText(int newMoneyAmount)
     {
         moneyAmountText.text = newMoneyAmount.ToString();
     }
 
+    /// <summary>
+    /// Updates how many enemies have passed out of the allowed amount
+    /// </summary>
     void UpdateEnemyAmountsText(int currAmount, int totalAmount)
     {
         enemiesAmountText.text = $"{currAmount}/{totalAmount}";
     }
 
+    /// <summary>
+    /// Updates the current wave num out of all
+    /// </summary>
     void UpdateWavesAmountText(int currAmount, int totalAmount)
     {
         wavesAmountText.text = $"{currAmount}/{totalAmount}";
     }
 
+    /// <summary>
+    /// Handles the updating of the Tower Buy UI panel
+    /// </summary>
+    /// <param name="towersData">All the Towers data to display in the UI</param>
+    /// <param name="currentAmountMoney">Depending on the current amount of money, modify certain UI elements</param>
     void UpdateBuyPanel(List<BuyableTower> towersData, int currentAmountMoney)
     {
         if (towersData.Count > buyMenuTowers.Count)
@@ -173,7 +205,7 @@ public class GameUIManager : MonoBehaviour
         }
 
         int iterator = towersData.Count < buyMenuTowers.Count ? towersData.Count : buyMenuTowers.Count;
-        for (int i = 0; i < iterator; i++)
+        for (int i = 0; i < iterator; i++) // iterate through all towers and set UI elements appropriately
         {
             GameObject towerPrefab = buyMenuTowers[i].SetTowerPrefab(towersData[i].towerPrefab);
 
@@ -197,6 +229,7 @@ public class GameUIManager : MonoBehaviour
                     return;
             }
             buyMenuTowers[i].Range.text = $"Range: {towerPrefab.GetComponent<SelectionRange>().Value}";
+            // If it has such component, display detail, if not - hide it
             if (towerPrefab.TryGetComponent<DamageAmount>(out DamageAmount damageAmount))
             {
                 buyMenuTowers[i].Damage.text = $"Damage: {damageAmount.Value}";
@@ -215,6 +248,7 @@ public class GameUIManager : MonoBehaviour
             }
 
             buyMenuTowers[i].Price.text = $"Price: {towersData[i].price}";
+            // Depending on current amount of money, modify UI elements
             if (towersData[i].price <= currentAmountMoney)
             {
                 buyMenuTowers[i].Price.color = Color.green;
@@ -233,7 +267,7 @@ public class GameUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Called when on tower selector clicked in UI
+    /// Called when clicked on tower selector in UI
     /// </summary>
     /// <param name="towerDetails">The UI object to set visibility</param>
     public void SelectTower(RectTransform towerDetails)
@@ -258,21 +292,29 @@ public class GameUIManager : MonoBehaviour
         OnTowerSelection?.Invoke(buyMenuTowers.First(t => t.TowerDetails == towerDetails).TowerPrefab);
     }
 
+    /// <summary>
+    /// Show/Hide UI Upgrade/Sell panel
+    /// </summary>
     void ModifyUpgradeSellPanelVisibility()
     {
         upgradeSellPanel.SetActive(!upgradeSellPanel.activeInHierarchy);
     }
 
+    /// <summary>
+    /// Handles the updating of the Tower Upgrade/Sell UI panel
+    /// </summary>
+    /// <param name="tower">Tower details</param>
+    /// <param name="currentAmountMoney">Depending on the current amount of money, modify certain UI elements</param>
     void UpdateUpgradePanel(TowerController tower, int currentAmountMoney)
     {
-        if (!upgradeSellPanel.activeInHierarchy)
+        if (!upgradeSellPanel.activeInHierarchy) // Check just in case
         {
             ModifyUpgradeSellPanelVisibility();
         }
 
         TowerModel model = tower.GetComponent<TowerModel>();
 
-        if (tower.IsLastLevel())
+        if (tower.IsLastLevel()) // Do not show tower upgrade details if last level - no more upgrading should be possible
         {
             ModifyUpgradeDetailsVisibility(false);
         }
@@ -284,6 +326,7 @@ public class GameUIManager : MonoBehaviour
             towerToUpgradeUIData.DamageDebuff.text = $"Damage/Debuff: +{model.UpgradeDamageDebuff} = {model.CurrentDamageDebuff + model.UpgradeDamageDebuff}";
             towerToUpgradeUIData.UpgradePrice.text = $"Price: {model.UpgradePrice}";
 
+            // Depending on current amount of money, modify UI elements
             if (model.UpgradePrice <= currentAmountMoney)
             {
                 towerToUpgradeUIData.UpgradeBtnText.color = new Color(
@@ -315,6 +358,9 @@ public class GameUIManager : MonoBehaviour
         towerToUpgradeUIData.SellPrice.text = $"Get: {model.SellPrice}";
     }
 
+    /// <summary>
+    /// Helper method for showing/hiding Tower Upgrade details
+    /// </summary>
     void ModifyUpgradeDetailsVisibility(bool shouldShow)
     {
         towerToUpgradeUIData.Range.gameObject.SetActive(shouldShow);

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// UI Singleton manager for GameOverScreen, responsible for displaying the correct canvas on GameOver
+/// </summary>
 public class GameOverUIManager : MonoBehaviour
 {
     public static GameOverUIManager Instance => instance;
@@ -28,6 +31,7 @@ public class GameOverUIManager : MonoBehaviour
 
     void Start()
     {
+        // Check to see the GameOver result and output the appropriate canvas
         if (GameManager.IsWaveOverWin)
         {
             gameOverWinPanel.gameObject.SetActive(true);

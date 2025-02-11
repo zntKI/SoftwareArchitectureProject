@@ -13,6 +13,9 @@ public enum BuildState
     NotBuilding
 }
 
+/// <summary>
+/// Container class containing information about the Prefab of a buyable tower as well its price
+/// </summary>
 public class BuyableTower
 {
     public GameObject towerPrefab;
@@ -25,9 +28,12 @@ public class BuyableTower
     }
 }
 
+/// <summary>
+/// Building Singleton manager, responsible for tower buying, upgrading and selling as well as communicating with other managers
+/// </summary>
 public class BuildManager : MonoBehaviour
 {
-    public static event Action OnBuilingEnd;
+    public static event Action OnBuildingEnd;
 
     public static event Action<int> OnMoneyUpdated;
     public static event Action<int> OnTimeUpdate;
@@ -39,8 +45,7 @@ public class BuildManager : MonoBehaviour
     public static event Action<List<BuyableTower>, int> OnBuyingUpdateUI;
 
     /// <summary>
-    /// Called either when a player deselects a tower, or when he selects the same tower he deselected the last time<br></br>
-    /// which shows/hides the Upgrade/Sell UI panel
+    /// Shows/hides the Upgrade/Sell UI panel
     /// </summary>
     public static event Action OnUpgradePanelModifyVisibility;
     /// <summary>
@@ -54,7 +59,9 @@ public class BuildManager : MonoBehaviour
     private BuildState buildState;
 
     [SerializeField]
-    private int buildTimeSec = 60;
+    private int buildTimeSec = 20;
+    [SerializeField]
+    private int buildTimeAddAfterEachWave = 10;
     private float timeCounterForBuild;
 
     [SerializeField]
@@ -68,11 +75,14 @@ public class BuildManager : MonoBehaviour
 
     /// <summary>
     /// Contains information about the buyable tower with its price for ease of use instead of having
-    /// to retrieve the price constantly from the Model
+    /// to retrieve the price constantly from the TowerModel
     /// </summary>
     private List<BuyableTower> buyables = new List<BuyableTower>();
     private BuyableTower currentBuySelectedTower;
 
+    /// <summary>
+    /// A game object that is used for marking possible location of a new tower to be build
+    /// </summary>
     [SerializeField]
     private GameObject buildSpotPrefab;
     private List<GameObject> buildSpots = new List<GameObject>();
@@ -106,6 +116,7 @@ public class BuildManager : MonoBehaviour
 
     void Start()
     {
+        // Retrieve information only once - from the start
         foreach (var tower in buyableTowers)
         {
             buyables.Add(new BuyableTower(tower, tower.GetComponent<TowerModel>().BuyPrice));
@@ -114,24 +125,31 @@ public class BuildManager : MonoBehaviour
         buildSpots = GameObject.FindGameObjectsWithTag("BuildSpot").ToList();
         ModifyBuildSpotsVisibility(false);
 
+        OnMoneyUpdated?.Invoke(moneyAmount); // Update Money UI text
+
         buildState = BuildState.NotBuilding;
-        timeCounterForBuild = buildTimeSec;
+        buildTimeSec -= buildTimeAddAfterEachWave; // So that the first time, it increments it and gets it back to initial value
 
-        OnMoneyUpdated?.Invoke(moneyAmount);
-
-        SetupBuilding();
+        if (GameManager.IsBuildFirst)
+        {
+            SetupBuilding();
+        }
     }
 
     void SetupBuilding()
     {
         buildState = BuildState.Buying;
+        buildTimeSec += buildTimeAddAfterEachWave; // Each following building sess, increase the build time
         timeCounterForBuild = buildTimeSec;
 
         // UI
-        OnBuildingStartUI?.Invoke(GameState.Building);
-        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount);
+        OnBuildingStartUI?.Invoke(GameState.Building); // Hide Wave UI and show Build UI
+        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount); // Update Buy UI panel
     }
 
+    /// <summary>
+    /// Used for resetting variables that belong to previous state
+    /// </summary>
     void SwitchBuildState(BuildState newBuildState)
     {
         if (buildState == BuildState.Buying &&
@@ -157,22 +175,25 @@ public class BuildManager : MonoBehaviour
 
     void Update()
     {
-        if (buildState != BuildState.NotBuilding)
+        if (buildState != BuildState.NotBuilding) // If in any kind of building, pass build time
         {
             timeCounterForBuild -= Time.deltaTime;
             OnTimeUpdate?.Invoke((int)Mathf.Ceil(timeCounterForBuild));
 
-            if (timeCounterForBuild <= 0)
+            if (timeCounterForBuild <= 0) // On build time over, switch game states
             {
                 buildState = BuildState.NotBuilding;
 
                 ResetVars();
 
-                OnBuilingEnd?.Invoke();
+                OnBuildingEnd?.Invoke();
             }
         }
     }
 
+    /// <summary>
+    /// Called when Building finished to reset variables
+    /// </summary>
     void ResetVars()
     {
         currentBuySelectedTower = null;
@@ -183,25 +204,31 @@ public class BuildManager : MonoBehaviour
         ModifyBuildSpotsVisibility(false);
     }
 
+    /// <summary>
+    /// Called when money amount changes in order to update it and its UI element
+    /// </summary>
     void UpdateMoney(int moneyToAdd)
     {
         moneyAmount += moneyToAdd;
         OnMoneyUpdated?.Invoke(moneyAmount);
     }
 
+    /// <summary>
+    /// Called when a tower from the Buy UI panel has been selected
+    /// </summary>
     void SetSelectedTower(GameObject selectedTower)
     {
-        if (buildState != BuildState.Buying)
+        if (buildState != BuildState.Buying) // Stop tower upgrading/selling process if present
         {
             SwitchBuildState(BuildState.Buying);
         }
 
-        if (selectedTower != null)
+        if (selectedTower != null) // If tower gets selected
         {
             ModifyBuildSpotsVisibility(false); // Just in case another affordable tower had been selected beforehand
 
             currentBuySelectedTower = buyables.FirstOrDefault(b => b.towerPrefab == selectedTower);
-            if (currentBuySelectedTower == null)
+            if (currentBuySelectedTower == null) // Tower buying collections in BuildManager and GameUIManager do not match
             {
                 Debug.LogError("No such tower available for buying!");
             }
@@ -211,13 +238,17 @@ public class BuildManager : MonoBehaviour
                 ModifyBuildSpotsVisibility(true);
             }
         }
-        else
+        else // If tower is deselected
         {
             currentBuySelectedTower = null;
             ModifyBuildSpotsVisibility(false);
         }
     }
 
+    /// <summary>
+    /// Hide/show build spots game objects
+    /// </summary>
+    /// <param name="shouldMakeVisible"></param>
     void ModifyBuildSpotsVisibility(bool shouldMakeVisible)
     {
         foreach (var spot in buildSpots)
@@ -226,6 +257,9 @@ public class BuildManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when one of the build spots has been clicked
+    /// </summary>
     void PlaceTower(Transform buildSpotTransform)
     {
         if (currentBuySelectedTower == null)
@@ -234,10 +268,10 @@ public class BuildManager : MonoBehaviour
             return;
         }
 
-        if (moneyAmount >= currentBuySelectedTower.price)
+        if (moneyAmount >= currentBuySelectedTower.price) // If enough money, build tower
         {
             // Build tower on same position as build spot
-            Instantiate(currentBuySelectedTower.towerPrefab, buildSpotTransform.position, Quaternion.identity);
+            Instantiate(currentBuySelectedTower.towerPrefab, buildSpotTransform.position, Quaternion.identity).GetComponent<TowerController>().Init();
 
             // Update collection after build spot being destroyed
             buildSpots.Remove(buildSpotTransform.gameObject);
@@ -245,12 +279,11 @@ public class BuildManager : MonoBehaviour
             ModifyBuildSpotsVisibility(false);
 
             // Reduce money by cost of tower
-            moneyAmount -= currentBuySelectedTower.price;
+            UpdateMoney(-currentBuySelectedTower.price);
             // No current selected tower for buying
             currentBuySelectedTower = null;
 
             // Update UI
-            OnMoneyUpdated?.Invoke(moneyAmount);
             OnBuyingUpdateUI?.Invoke(buyables, moneyAmount);
 
             SwitchBuildState(BuildState.Building);
@@ -261,9 +294,12 @@ public class BuildManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called when in-game tower object has been clicked
+    /// </summary>
     void CheckForUpgrading(TowerController tower)
     {
-        if (buildState != BuildState.UpgradingSelling)
+        if (buildState != BuildState.UpgradingSelling) // Stop tower buying process if present
         {
             SwitchBuildState(BuildState.UpgradingSelling);
         }
@@ -293,33 +329,38 @@ public class BuildManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called on tower upgraded
+    /// </summary>
     public void OnUpgradeBtnClicked()
     {
         int price = currentUpgradeSelectedTower.Upgrade();
-        moneyAmount -= price;
-        OnMoneyUpdated.Invoke(moneyAmount);
+        UpdateMoney(-price);
 
-        OnUpgradingUpdateUI?.Invoke(currentUpgradeSelectedTower, moneyAmount); // Update Upgrade panel
+        OnUpgradingUpdateUI?.Invoke(currentUpgradeSelectedTower, moneyAmount); // Update Upgrade UI panel
 
-        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount);
+        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount); // Update Buy UI panel
     }
 
+    /// <summary>
+    /// Called on tower sold
+    /// </summary>
     public void OnSellBtnClicked()
     {
         int price = currentUpgradeSelectedTower.Sell();
-        moneyAmount += price;
-        OnMoneyUpdated.Invoke(moneyAmount);
+        UpdateMoney(price);
 
-        OnUpgradePanelModifyVisibility?.Invoke();
+        OnUpgradePanelModifyVisibility?.Invoke(); // Hide Upgrade UI panel
 
         // Delete the sold tower
         Destroy(currentUpgradeSelectedTower.gameObject);
-        // Reinsert the deleted buildspot when the tower was initially built
+
+        // Reinsert the deleted buildspot where the tower was initially built
         GameObject newBuildSpot = Instantiate(buildSpotPrefab, currentUpgradeSelectedTower.transform.position, Quaternion.identity);
         newBuildSpot.SetActive(false);
         buildSpots.Add(newBuildSpot);
 
-        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount);
+        OnBuyingUpdateUI?.Invoke(buyables, moneyAmount); // Update Buy UI panel
 
         SwitchBuildState(BuildState.Building);
     }

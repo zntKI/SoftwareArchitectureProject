@@ -44,8 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0edd354461eaf7488c7bc5422b063cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildTimeSec: 30
-  moneyAmount: 0
+  buildTimeSec: 20
+  buildTimeAddAfterEachWave: 10
+  moneyAmount: 15
   buyableTowers:
   - {fileID: 5753262442931659193, guid: 28fa401dd091eab408661bb8a9e62c61, type: 3}
   - {fileID: 5753262442931659193, guid: 8126840058f554645ba8465514d76b7b, type: 3}

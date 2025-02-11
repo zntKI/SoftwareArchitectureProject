@@ -5,6 +5,9 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// A movement behaviour that uses waypoints to navigate Enemies' movement
+/// </summary>
 public class WaypointMovementBehaviour : MovementBehaviour
 {
     private EnemyModel model;
@@ -12,6 +15,9 @@ public class WaypointMovementBehaviour : MovementBehaviour
 
     private Queue<GameObject> waypoints;
 
+    /// <summary>
+    /// Waypoint game object, its detection radius that is used to check if enemy has reached it
+    /// </summary>
     private Tuple<GameObject, DebugCircle> currentTargetWaypoint;
 
     void Start()
@@ -27,7 +33,7 @@ public class WaypointMovementBehaviour : MovementBehaviour
     {
         waypoints = new Queue<GameObject>();
 
-        // TODO: Think of smth better - maybe a game manager holds the waypoints and you request when needed
+        // Retrieve waypoints ordered by ID
         var tempWaypoints = FindObjectsByType<IdHolder>(FindObjectsSortMode.None).OrderBy(w => w.Id);
         foreach (var waypoint in tempWaypoints)
         {
@@ -39,9 +45,6 @@ public class WaypointMovementBehaviour : MovementBehaviour
     {
         speed = model.Speed;
     }
-
-    public void SetSpeed(float newSpeed)
-        => this.speed = newSpeed;
 
     public override void DoMoving()
     {
@@ -56,6 +59,7 @@ public class WaypointMovementBehaviour : MovementBehaviour
         CheckIfWaypointReached();
     }
 
+    /// <returns>If there is a waypoint to be picked</returns>
     bool PickWaypoint()
     {
         if (currentTargetWaypoint.Item1 == null)
@@ -69,6 +73,9 @@ public class WaypointMovementBehaviour : MovementBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Check if there are more waypoints to visit
+    /// </summary>
     bool HasReachedEnd()
     {
         if (waypoints.Count == 0) // There is no more waypoints to visit
@@ -85,6 +92,9 @@ public class WaypointMovementBehaviour : MovementBehaviour
         transform.Translate(amountToMove);
     }
 
+    /// <summary>
+    /// Checks if Enemy's positions is smaller than the waypoint's radius
+    /// </summary>
     void CheckIfWaypointReached()
     {
         float distance = (currentTargetWaypoint.Item1.transform.position - this.transform.position).magnitude;

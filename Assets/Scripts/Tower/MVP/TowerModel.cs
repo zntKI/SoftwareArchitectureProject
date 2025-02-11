@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Part of the MVP pattern for Tower<br></br>
+/// Handles all data regarding Tower
+/// </summary>
 public class TowerModel : MonoBehaviour
 {
     public int BuyPrice => buyPrice;
@@ -46,7 +50,10 @@ public class TowerModel : MonoBehaviour
     [SerializeField]
     private int priceAddAmount;
 
-    void Start()
+    /// <summary>
+    /// Need to be called before Start
+    /// </summary>
+    public void Init()
     {
         range = GetComponent<SelectionRange>();
 
@@ -63,6 +70,9 @@ public class TowerModel : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called on Tower Upgrade to update Tower data accordingly
+    /// </summary>
     public void Upgrade()
     {
         range.ModifyValue(upgradePrice);

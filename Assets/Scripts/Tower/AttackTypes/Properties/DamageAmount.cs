@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageAmount : MonoBehaviour, IPropertyValue<float>
+/// <summary>
+/// Tower Property that indicates the damage that a tower inflicts on Enemies
+/// </summary>
+public class DamageAmount : MonoBehaviour, IPropertyReadOnlyValue<float>, IPropertyModifiableValue<float>
 {
     [SerializeField]
     private float damage = 1f;
@@ -13,6 +16,4 @@ public class DamageAmount : MonoBehaviour, IPropertyValue<float>
     {
         damage = value;
     }
-
-    //public float Damage => damage;
 }

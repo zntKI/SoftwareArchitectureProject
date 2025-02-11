@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Part of the MVP pattern for Enemy<br></br>
+/// Acts as a middleman between EnemyModel and EnemyView, handing out tasks
+/// </summary>
 [RequireComponent(typeof(EnemyModel))]
 [RequireComponent(typeof(EnemyView))]
 [RequireComponent(typeof(MovementBehaviour))]
@@ -21,12 +25,16 @@ public class EnemyController : MonoBehaviour
 
     private bool isSlowedDown;
 
-    void Start()
+    /// <summary>
+    /// Need to be called before Start
+    /// </summary>
+    public void Init()
     {
         model = GetComponent<EnemyModel>();
         model.OnHealthZero += Died;
 
         view = GetComponent<EnemyView>();
+        view.Init();
 
         movementBehaviour = GetComponent<MovementBehaviour>();
         movementBehaviour.OnReachedEnd += ReachedEnd;
@@ -37,22 +45,33 @@ public class EnemyController : MonoBehaviour
         movementBehaviour.DoMoving();
     }
 
-    public void TakeDamage(DamageAmount damageAmount)
+    /// <summary>
+    /// Registers damage amount from towers' attacks
+    /// </summary>
+    public void TakeDamage(IPropertyReadOnlyValue<float> damageAmount)
     {
         model.UpdateHealth(-damageAmount.Value);
         view.CheckHealth(model.Health, model.InitialHealth);
     }
 
-    public void ShouldBeSlowedDown(SlowDownAmount slowDownAmount)
+    /// <summary>
+    /// Registers slow-down effect from 'Debuff' towers
+    /// </summary>
+    /// <param name="slowDownColor">Color overlay that resembles the slow-down effect</param>
+    public void ShouldBeSlowedDown(IPropertyReadOnlyValue<float> slowDownAmount, Color slowDownColor)
     {
-        if (!isSlowedDown)
+        if (!isSlowedDown) // Do not reapply the same effect more than once
         {
             isSlowedDown = true;
 
             model.UpdateSpeed(slowDownAmount.Value);
+            view.UpdateColor(slowDownColor);
         }
     }
 
+    /// <summary>
+    /// When having left tower target zone, checks to see if it has been slowed down beforehand
+    /// </summary>
     public void OnTargetZoneLeave()
     {
         if (isSlowedDown)
@@ -60,31 +79,38 @@ public class EnemyController : MonoBehaviour
             isSlowedDown = false;
 
             model.ResetSpeed();
+            view.ResetColor();
         }
     }
 
+    /// <summary>
+    /// Registers an Event from MovementBehaviour that Enemy has reached the end and then destroys it
+    /// </summary>
     void ReachedEnd()
     {
         OnReachedEnd?.Invoke(this);
 
         Destroy(gameObject);
-        // Also fire an event to increase the counter of enemies passed?
     }
 
+    /// <summary>
+    /// Registers an Event when the Enemy health has reached zero
+    /// </summary>
     void Died()
     {
         view.SpawnMoneyParticle(model.Money);
 
         Destroy(gameObject);
 
-        OnMoneyDropped?.Invoke(model.Money); // First do other calls before enemy death
-        OnDied?.Invoke(this);
-        // Also fire an event to increase money?
+        // First do other calls before enemy death
+        OnMoneyDropped?.Invoke(model.Money); // Add to Player's money amount
+
+        OnDied?.Invoke(this); // Register Enemy death
     }
 
     void OnDestroy()
     {
-        if (movementBehaviour != null)
+        if (movementBehaviour != null) // First check if movement behaviour has been destroyed before that
             movementBehaviour.OnReachedEnd -= ReachedEnd;
     }
 }

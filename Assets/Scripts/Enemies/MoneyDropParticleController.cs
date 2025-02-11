@@ -19,6 +19,9 @@ public class MoneyDropParticleController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Called right after being created to setup its destruction after its lifetime period
+    /// </summary>
     public void Init()
     {
         Destroy(gameObject, lifetime);
@@ -28,7 +31,7 @@ public class MoneyDropParticleController : MonoBehaviour
     {
         timeCounter += Time.deltaTime;
 
-        transform.position += Vector3.up * moveSpeed * Time.deltaTime;
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, Mathf.Lerp(1f, 0f, timeCounter / lifetime));
+        transform.position += Vector3.up * moveSpeed * Time.deltaTime; // Move up slightly
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, Mathf.Lerp(1f, 0f, timeCounter / lifetime)); // Lower opacity
     }
 }

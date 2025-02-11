@@ -2,12 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A tower that applies constant slow-down effect to the enemies that are currently in range.
+/// </summary>
 [RequireComponent(typeof(SlowDownAmount))]
 public class DebuffAttackType : AttackType
 {
-    SlowDownAmount slowDownAmount;
+    /// <summary>
+    /// Color overlay to apply to an Enemy when slowed down
+    /// </summary>
+    [SerializeField]
+    private Color enemyColorWhenSlowedDown;
 
-    private void Start()
+    private IPropertyReadOnlyValue<float> slowDownAmount;
+
+    public override void Init()
     {
         slowDownAmount = GetComponent<SlowDownAmount>();
     }
@@ -16,7 +25,7 @@ public class DebuffAttackType : AttackType
     {
         foreach (EnemyController target in targets)
         {
-            target.ShouldBeSlowedDown(slowDownAmount);
+            target.ShouldBeSlowedDown(slowDownAmount, enemyColorWhenSlowedDown);
         }
     }
 

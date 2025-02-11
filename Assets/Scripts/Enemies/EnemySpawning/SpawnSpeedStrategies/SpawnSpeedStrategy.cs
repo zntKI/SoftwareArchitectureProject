@@ -10,5 +10,9 @@ public abstract class SpawnSpeedStrategy : Strategy
 {
     protected float spawnIntervalCounter;
 
+    /// <summary>
+    /// Counts time between spawning of enemies
+    /// </summary>
+    /// <returns>If time to spawn new enemy</returns>
     public abstract bool CountTime();
 }
