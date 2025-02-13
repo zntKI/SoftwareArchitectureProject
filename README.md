@@ -36,9 +36,9 @@ The following section gives concrete examples of where they have been applied:
   4. Spawning, and therefore 'SpawnController', relies heavily on the Strategy pattern, with which wave properties can be easily configurable through the inspector, allowing for many unique combination to be tested out without having to make changes to the code and wait for recompile time.
  
 - **Building:**
-  1. Analogically to Enemies, Towers also apply the MVP pattern to spread out tasks and responsibilities to avoid clutternes in code.
+  1. Analogically to Enemies, Towers also apply the MVP pattern to spread out tasks and responsibilities to avoid clutter in code.
   2. Again, similar to Waves, Building is also supervised by a Singleton 'BuildManager' that handles tower buying, upgrading and selling.
-  3. 'BuildManager' communicates (also through the Observer pattern) mostly with the 'GameUIManager', since all tower interactions require some form of mouse input, transferred from the UI elements to the logic behind that interprets it appropriately.
+  3. 'BuildManager' communicates (also through the Observer pattern) mostly with the 'GameUIManager,' since all tower interactions require some form of mouse input, transferred from the UI elements to the logic behind that interprets it appropriately.
   4. Towers have two kinds of behaviours: Targeting and Attacking; both are defined utilizing abstraction as a tool to make their implementations interchangeable and design-friendly to modify through the inspector.
 
 # Assets:
