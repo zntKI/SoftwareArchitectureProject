@@ -41,6 +41,10 @@ The following section gives concrete examples of where they have been applied:
   3. 'BuildManager' communicates (also through the Observer pattern) mostly with the 'GameUIManager,' since all tower interactions require some form of mouse input, transferred from the UI elements to the logic behind that interprets it appropriately.
   4. Towers have two kinds of behaviours: Targeting and Attacking; both are defined utilizing abstraction as a tool to make their implementations interchangeable and design-friendly to modify through the inspector.
 
+## UML Class Diagram
+
+[To PDF file](https://github.com/zntKI/SoftwareArchitectureProject/blob/main/Media/UML.pdf)
+
 # Assets:
 In-game assets: [Isometric Tower defense pack](https://assetstore.unity.com/packages/2d/environments/isometric-tower-defense-pack-183472)<br>
 GUI: [Graphics created by Penzilla Design](https://penzilla.itch.io/basic-gui-bundle)
